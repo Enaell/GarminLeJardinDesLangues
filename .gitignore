@@ -1,0 +1,45 @@
+# Fichiers de build Garmin
+bin/
+*.prg
+*.prg.debug.xml
+*.debug.xml
+*.mir
+gen/
+*.mcgen
+mir/
+internal-mir/
+
+# Dossiers de test sur device
+App device test/
+
+# Fichiers de cache
+.cache/
+*.mbc
+
+# Pas de polices personnalisées - on utilise les polices système de Garmin
+
+# IDEs et éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Système d'exploitation
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python (script d'optimisation)
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+venv/
+env/
+
+# Logs
+*.log
+
+# Documentation temporaire
+*.tmp

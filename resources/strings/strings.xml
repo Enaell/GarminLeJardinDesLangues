@@ -1,0 +1,13 @@
+<strings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <string id="AppName">Le Jardin des Langues</string>
+
+    <!-- Quiz UI -->
+    <string id="correct">Correct!</string>
+    <string id="incorrect">Incorrect</string>
+    <string id="score">Score</string>
+    
+    <!-- Menu -->
+    <string id="menu_label_1">Nouveau Quiz</string>
+    <string id="menu_label_2">Statistiques</string>
+    <string id="menu_quit">Quitter</string>
+</strings>
