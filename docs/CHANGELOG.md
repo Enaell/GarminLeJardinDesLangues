@@ -11,7 +11,52 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Mode révision des mots difficiles
 - Statistiques détaillées de progression
 - Filtrage par niveau HSK
-- Mode inverse (français → mandarin)
+
+## [1.1.0] - 2025-10-20
+
+### ✨ Ajouté
+- **Écran d'accueil avec menu de sélection**
+  - Nouveau fichier `MenuView.mc` : Interface de menu élégante avec 2 options
+  - Nouveau fichier `MenuDelegate.mc` : Gestion des interactions dans le menu
+  - Navigation avec UP/DOWN entre les options
+  - Support tactile : clic direct sur une option pour la lancer
+  - Titre "Le Jardin des Langues" avec sous-titre
+
+- **Mode Quiz Inversé (Français → Hanzi)** 🎉
+  - Question affichée en français
+  - 4 options de réponse en caractères chinois (hanzi)
+  - Affichage du pinyin entre parenthèses comme indice
+  - Feedback adapté avec hanzi + pinyin en cas d'erreur
+
+- **Navigation améliorée**
+  - Bouton BACK retourne maintenant au menu au lieu de quitter l'application
+  - Transition fluide avec animation SLIDE_RIGHT
+
+### Modifié
+- **QuizModel**
+  - Ajout de 2 modes : `MODE_NORMAL` (Hanzi→Français) et `MODE_REVERSE` (Français→Hanzi)
+  - Le constructeur accepte maintenant un paramètre `mode`
+  - `generateOptions()` adapté pour générer les bonnes options selon le mode
+  - Ajout de la méthode `getQuizMode()` pour connaître le mode actuel
+
+- **LanguageView**
+  - Le constructeur accepte maintenant un paramètre `mode` 
+  - Ajout de `drawNormalModeQuestion()` pour affichage Hanzi→Français
+  - Ajout de `drawReverseModeQuestion()` pour affichage Français→Hanzi
+  - `drawFeedback()` adapté pour afficher la correction selon le mode
+
+- **LanguageApp**
+  - `getInitialView()` retourne maintenant `MenuView` au lieu de `LanguageView`
+  - Le menu devient le point d'entrée de l'application
+
+### Architecture
+- **Nouveaux fichiers** :
+  - `source/MenuView.mc` : ~200 lignes
+  - `source/MenuDelegate.mc` : ~85 lignes
+- **Fichiers modifiés** :
+  - `source/QuizModel.mc` : +8 lignes (enum modes)
+  - `source/LanguageView.mc` : +70 lignes (support mode inversé)
+  - `source/LanguageApp.mc` : 1 ligne changée (point d'entrée)
 
 ## [1.0.1] - 2025-10-20
 

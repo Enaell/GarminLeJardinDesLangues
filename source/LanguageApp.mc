@@ -18,8 +18,8 @@ class LanguageApp extends Application.AppBase {
 
     // Return the initial view of your application here
     function getInitialView() as [Views] or [Views, InputDelegates] {
-        var view = new LanguageView();
-        return [ view, new LanguageDelegate(view) ];
+        var view = new MenuView();
+        return [ view, new MenuDelegate(view) ];
     }
 
 }

@@ -4,14 +4,17 @@ Application Garmin Connect IQ pour apprendre le vocabulaire mandarin des niveaux
 
 ## 📱 Fonctionnalités
 
-### Version 1.0 - Implémentée ✅
+### Version 1.1 - Implémentée ✅
+- ✅ **Écran d'accueil avec menu** : Choisissez votre type de quiz
+- ✅ **Quiz Normal (Hanzi → Français)** : Voir un caractère chinois et trouver sa traduction
+- ✅ **Quiz Inversé (Français → Hanzi)** : Voir un mot français et trouver le bon caractère chinois
 - ✅ **Quiz à choix multiples** : 4 options de réponse par question
 - ✅ **Vocabulaire complet HSK 1 & 2** : ~300 mots avec caractères chinois, pinyin et traductions françaises
 - ✅ **Affichage des hanzi** : Les polices système de Garmin affichent correctement les caractères chinois sur Fenix 8
 - ✅ **Feedback visuel immédiat** : Fond vert pour bonne réponse, rouge pour mauvaise réponse
 - ✅ **Affichage du pinyin** : Aide à la prononciation sous les caractères chinois
 - ✅ **Score en temps réel** : Suivi de vos bonnes réponses
-- ✅ **Navigation intuitive** : Utilisation des boutons de la montre
+- ✅ **Navigation intuitive** : Utilisation des boutons de la montre ou écran tactile
 - ✅ **Anti-répétition** : Évite de proposer les mêmes mots trop rapidement
 
 ### Fonctionnalités Futures (v2.0+)
@@ -19,28 +22,45 @@ Application Garmin Connect IQ pour apprendre le vocabulaire mandarin des niveaux
 - 🔜 Mode révision des mots difficiles
 - 🔜 Exemples de phrases en contexte
 - 🔜 Filtrage par niveau HSK (1 ou 2)
-- 🔜 Mode inverse (français → mandarin)
 - 🔜 Système de répétition espacée (SRS)
 
 ## 🎮 Utilisation
 
-### Contrôles
+### Menu Principal
+Au lancement, vous verrez un écran d'accueil avec 2 options :
+1. **Quiz Normal** : 汉字 → Français (voir hanzi, trouver traduction)
+2. **Quiz Inversé** : Français → 汉字 (voir français, trouver hanzi)
+
+**Navigation du menu** :
+- **Bouton UP/DOWN** : Choisir une option
+- **Bouton SELECT** ou **Clic tactile** : Lancer le quiz sélectionné
+
+### Contrôles du Quiz
 - **Bouton UP (Haut)** : Option précédente
 - **Bouton DOWN (Bas)** : Option suivante
 - **Bouton SELECT/START** : Valider la réponse sélectionnée
 - **Clic tactile sur une option** : Sélectionner et valider directement cette option
-- **Bouton BACK** : Quitter l'application
+- **Bouton BACK** : Retourner au menu de sélection
 
 ### Comment jouer
+
+#### Quiz Normal (Hanzi → Français)
 1. Lancez l'application sur votre Fenix 8
-2. Un caractère chinois (hanzi) s'affiche avec son pinyin
-3. **Deux façons de répondre** :
+2. Sélectionnez "Quiz Normal" dans le menu
+3. Un caractère chinois (hanzi) s'affiche avec son pinyin
+4. **Deux façons de répondre** :
    - **Navigation** : UP/DOWN pour sélectionner, SELECT pour valider
    - **Tactile** : Cliquer directement sur l'option désirée (sélection + validation instantanée)
-4. Un feedback visuel s'affiche :
+5. Un feedback visuel s'affiche :
    - **Vert** ✓ : Bonne réponse !
    - **Rouge** ✗ : Mauvaise réponse (la correction s'affiche)
-5. Appuyez à nouveau sur SELECT (ou cliquez sur l'écran) pour passer au mot suivant
+6. Appuyez à nouveau sur SELECT (ou cliquez sur l'écran) pour passer au mot suivant
+
+#### Quiz Inversé (Français → Hanzi)
+1. Sélectionnez "Quiz Inversé" dans le menu
+2. Un mot en français s'affiche avec le pinyin entre parenthèses (indice)
+3. Choisissez le bon caractère chinois parmi 4 options
+4. Le feedback affiche le hanzi + pinyin en cas d'erreur
 
 ## 🏗️ Architecture Technique
 
@@ -49,6 +69,8 @@ Application Garmin Connect IQ pour apprendre le vocabulaire mandarin des niveaux
 Language/
 ├── source/
 │   ├── LanguageApp.mc          # Point d'entrée de l'application
+│   ├── MenuView.mc             # Écran d'accueil avec choix du mode ⭐ NEW
+│   ├── MenuDelegate.mc         # Gestion du menu d'accueil ⭐ NEW
 │   ├── LanguageView.mc         # Interface graphique du quiz
 │   ├── LanguageDelegate.mc     # Gestion des interactions utilisateur
 │   ├── QuizModel.mc            # Logique du quiz (questions, réponses, score)

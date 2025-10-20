@@ -64,11 +64,13 @@ class LanguageDelegate extends WatchUi.InputDelegate {
     }
 
     /**
-     * Gestion du bouton BACK - Quitter l'application
+     * Gestion du bouton BACK - Retourner au menu
      */
     function onBack() as Boolean {
-        // Laisser le comportement par défaut (quitter)
-        return false;
+        // Retour au menu de sélection
+        var menuView = new MenuView();
+        WatchUi.switchToView(menuView, new MenuDelegate(menuView), WatchUi.SLIDE_RIGHT);
+        return true;
     }
 
     /**

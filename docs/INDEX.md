@@ -9,13 +9,13 @@ Bienvenue dans la documentation du projet **Le Jardin des Langues** - Applicatio
 ### Je veux utiliser l'application
 👉 **[QUICKSTART.md](QUICKSTART.md)** - Guide de démarrage rapide (5 min)
 - Installation sur montre ou simulateur
-- Première utilisation
-- Contrôles et astuces
+- Première utilisation avec le menu
+- Contrôles et astuces pour les 2 modes de quiz
 
 ### Je veux comprendre le projet
-👉 **[README.md](README.md)** - Présentation générale
+👉 **[../README.md](../README.md)** - Présentation générale (racine du projet)
 - Description de l'application
-- Fonctionnalités actuelles et futures
+- Fonctionnalités actuelles (menu + 2 modes de quiz)
 - Architecture technique
 - Contenu pédagogique (vocabulaire HSK)
 
@@ -25,15 +25,16 @@ Bienvenue dans la documentation du projet **Le Jardin des Langues** - Applicatio
 
 ### Je veux contribuer au code
 👉 **[DEVELOPMENT.md](DEVELOPMENT.md)** - Guide développeur complet
-- Architecture détaillée (MVC)
-- Composants principaux (VocabularyData, QuizModel, etc.)
+- Architecture détaillée (MVC + Menu)
+- Composants principaux (MenuView, QuizModel, etc.)
 - Flux de données
 - Guide de personnalisation
 - Optimisations et débogage
 
 ### Je veux voir l'historique des changements
 👉 **[CHANGELOG.md](CHANGELOG.md)** - Historique des versions
-- Notes de la version 1.0
+- Notes de la version 1.1.0 (menu + mode inversé)
+- Historique complet depuis v1.0.0
 - Roadmap des versions futures
 - Format standardisé (Keep a Changelog)
 
@@ -41,18 +42,10 @@ Bienvenue dans la documentation du projet **Le Jardin des Langues** - Applicatio
 
 ## 📋 Informations Projet
 
-### Résumé du projet
-👉 **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** - Vue d'ensemble complète
-- État du projet (v1.0 complète ✅)
-- Fichiers créés (code + documentation)
-- Fonctionnalités implémentées
-- Statistiques du projet
-- Checklist de livraison
-
 ### Idées pour le futur
 👉 **[FUTURE_IDEAS.md](FUTURE_IDEAS.md)** - Améliorations potentielles
-- Fonctionnalités v1.1, v2.0, v3.0
-- Modes alternatifs (inverse, SRS, etc.)
+- Fonctionnalités v1.2, v2.0, v3.0
+- Persistance des données
 - Statistiques avancées
 - Contenu supplémentaire (HSK 3-6)
 
@@ -64,27 +57,27 @@ Bienvenue dans la documentation du projet **Le Jardin des Langues** - Applicatio
 Language/
 ├── 📄 README.md              ← Commencez ici ! (racine du projet)
 ├── 📁 docs/                  ← Documentation (ce dossier)
-│   ├── 📄 README.md            (Index de la documentation)
 │   ├── 📄 INDEX.md             (Ce fichier - navigation)
 │   ├── 📄 QUICKSTART.md        (Installation & Utilisation)
 │   ├── 📄 DEVELOPMENT.md       (Guide développeur)
 │   ├── 📄 CHANGELOG.md         (Historique des versions)
-│   ├── 📄 PROJECT_SUMMARY.md   (Résumé technique)
 │   └── 📄 FUTURE_IDEAS.md      (Idées d'améliorations)
 │
 ├── 📁 source/                ← Code source
 │   ├── LanguageApp.mc          (Point d'entrée)
-│   ├── LanguageView.mc         (Interface utilisateur)
-│   ├── LanguageDelegate.mc     (Interactions)
+│   ├── MenuView.mc             (Écran d'accueil avec menu)
+│   ├── MenuDelegate.mc         (Interactions du menu)
+│   ├── LanguageView.mc         (Interface du quiz)
+│   ├── LanguageDelegate.mc     (Interactions du quiz)
 │   ├── QuizModel.mc            (Logique du quiz)
 │   ├── VocabularyData.mc       (Base de données HSK)
-│   └── LanguageMenuDelegate.mc (Menu - non utilisé v1.0)
+│   └── LanguageMenuDelegate.mc (Menu système - non utilisé)
 │
 ├── 📁 resources/             ← Ressources
 │   ├── strings/strings.xml     (Textes interface)
-│   ├── layouts/layout.xml      (Layouts - non utilisés v1.0)
+│   ├── layouts/layout.xml      (Layouts - non utilisés)
 │   ├── drawables/              (Images et icônes)
-│   └── menus/menu.xml          (Menus - non utilisés v1.0)
+│   └── menus/menu.xml          (Menus - non utilisés)
 │
 ├── 📁 bin/                   ← Fichiers compilés
 │   └── Language.prg            (Application compilée)
@@ -138,13 +131,14 @@ Language/
 
 | Métrique | Valeur |
 |----------|--------|
-| **Version actuelle** | 1.0.1 |
+| **Version actuelle** | 1.1.0 |
 | **Date release** | 20 oct 2025 |
-| **Lignes de code** | ~1,150 |
-| **Lignes documentation** | ~1,400 |
-| **Fichiers source** | 5 |
-| **Fichiers documentation** | 5 (nettoyé) |
+| **Lignes de code** | ~1,455 |
+| **Lignes documentation** | ~800 |
+| **Fichiers source** | 7 |
+| **Fichiers documentation** | 4 (nettoyé) |
 | **Mots HSK** | 300 |
+| **Modes de quiz** | 2 (Normal + Inversé) |
 | **Appareils compatibles** | 6 modèles Fenix 8 |
 | **Langue interface** | Français |
 | **Langue contenu** | Mandarin |
@@ -192,6 +186,9 @@ A : Non, uniquement Fenix 8 série et Fenix E. Voir manifest.xml pour liste comp
 **Q : Puis-je changer les couleurs ?**  
 A : Oui, voir DEVELOPMENT.md > Personnalisation > Modifier les Couleurs.
 
+**Q : Quel mode de quiz choisir ?**  
+A : Quiz Normal pour apprendre à reconnaître les hanzi, Quiz Inversé pour renforcer la mémorisation.
+
 **Q : Où puis-je télécharger l'application ?**  
 A : Actuellement en développement. Compilez depuis le source ou attendez publication sur Connect IQ Store.
 
@@ -218,9 +215,9 @@ A : Actuellement en développement. Compilez depuis le source ou attendez public
 ## 📅 Dernière Mise à Jour
 
 **Date** : 20 octobre 2025  
-**Version** : 1.0.1  
+**Version** : 1.1.0  
 **État** : Stable - Production Ready ✅  
-**Dernière modification** : Support des clics tactiles + corrections de bugs
+**Dernière modification** : Menu d'accueil + Mode Quiz Inversé
 
 ---
 

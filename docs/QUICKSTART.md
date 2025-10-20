@@ -45,13 +45,44 @@
 
 ## Première Utilisation
 
-### Démarrer un Quiz
+### Écran d'Accueil - Menu
 
 1. **Lancez l'application**
-   - Un caractère chinois s'affiche immédiatement
-   - Le pinyin (prononciation) est visible en dessous
+   - Un menu d'accueil s'affiche avec 2 options :
+     - **Quiz 汉字 → Français** (Quiz Normal)
+     - **Quiz Français → 汉字** (Quiz Inversé)
+
+2. **Choisissez votre mode**
+   ```
+   ┌─────────────────────┐
+   │  Le Jardin des      │
+   │    Langues          │
+   │                     │
+   │ Choisissez quiz     │
+   ├─────────────────────┤
+   │ Quiz 汉字→Français ◄│  ← Sélectionné
+   │                     │
+   │ Quiz Français→汉字  │
+   ├─────────────────────┤
+   │ ↑↓ • SELECT lancer  │
+   └─────────────────────┘
+   ```
+
+3. **Navigation du menu**
+   - Bouton UP/DOWN : Changer de mode
+   - SELECT : Lancer le quiz sélectionné
+   - Clic tactile : Cliquer directement sur un mode pour le lancer
+
+### Démarrer un Quiz
+
+1. **Lancez l'application et choisissez votre mode**
+   - Sélectionnez "Quiz 汉字 → Français" ou "Quiz Français → 汉字"
+   - Un caractère chinois (mode normal) ou un mot français (mode inversé) s'affiche
+   - Le pinyin (prononciation) est visible
 
 2. **Lisez la question**
+   
+   **Mode Normal (汉字 → Français)** :
    ```
    ┌─────────────────────┐
    │                     │
@@ -62,6 +93,22 @@
    │  2. au revoir       │
    │  3. merci           │
    │  4. pardon          │
+   ├─────────────────────┤
+   │      0/0            │  ← Score actuel
+   └─────────────────────┘
+   ```
+   
+   **Mode Inversé (Français → 汉字)** :
+   ```
+   ┌─────────────────────┐
+   │                     │
+   │      Bonjour        │  ← Mot français
+   │      (nǐ hǎo)       │  ← Indice pinyin
+   ├─────────────────────┤
+   │  1. 你好        ◄   │  ← Option sélectionnée
+   │  2. 再见            │
+   │  3. 谢谢            │
+   │  4. 请              │
    ├─────────────────────┤
    │      0/0            │  ← Score actuel
    └─────────────────────┘
@@ -91,25 +138,34 @@
 6. **Suivez votre progression**
    - Le score en bas de l'écran s'actualise : `3/5` = 3 bonnes réponses sur 5 questions
 
+7. **Changez de mode**
+   - Appuyez sur le bouton **BACK** pour retourner au menu
+   - Choisissez l'autre mode de quiz
+
 ### Quitter
 
-- Appuyez sur le bouton **BACK** à tout moment
+- Appuyez sur le bouton **BACK** depuis le menu pour quitter l'application
 
 ## Astuces d'Utilisation
 
 ### 📚 Stratégies d'Apprentissage
 
-1. **Mode Découverte**
+1. **Mode Découverte (Quiz Normal)**
    - Lisez le pinyin avant de chercher la réponse
    - Essayez de prononcer le mot
    - Apprenez de vos erreurs (la correction s'affiche)
 
-2. **Mode Challenge**
-   - Masquez mentalement le pinyin
-   - Essayez de reconnaître le caractère seul
+2. **Mode Reconnaissance (Quiz Inversé)**
+   - Essayez de visualiser le hanzi avant de voir les options
+   - Utilisez le pinyin comme indice si besoin
+   - Renforcez votre mémoire visuelle des caractères
+
+3. **Mode Challenge**
+   - Alternez entre les 2 modes de quiz
+   - Essayez de reconnaître sans lire le pinyin
    - Visez un taux de réussite > 80%
 
-3. **Mode Révision**
+4. **Mode Révision**
    - Notez les mots que vous ratez souvent
    - Refaites des sessions pour les revoir
    - L'anti-répétition évite de voir le même mot 2 fois de suite
@@ -193,10 +249,11 @@ rm -rf bin/*
 ## Prochaines Étapes
 
 ### Après avoir maîtrisé les bases
-1. ✅ Atteignez 70% de réussite sur 50 questions
-2. 📚 Révisez les mots difficiles (notez-les)
-3. 🎯 Essayez de reconnaître les caractères sans le pinyin
-4. 🚀 Attendez la v1.1 pour les statistiques détaillées
+1. ✅ Atteignez 70% de réussite sur 50 questions en mode normal
+2. ✅ Testez le mode inversé pour renforcer la mémorisation
+3. 📚 Révisez les mots difficiles (notez-les)
+4. 🎯 Essayez de reconnaître les caractères sans le pinyin
+5. 🚀 Attendez la v1.2 pour les statistiques détaillées et la persistance
 
 ### Pour contribuer au projet
 - Consultez `DEVELOPMENT.md` pour le guide développeur

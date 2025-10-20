@@ -15,9 +15,9 @@ class LanguageView extends WatchUi.View {
         FEEDBACK_INCORRECT = 2
     }
 
-    function initialize() {
+    function initialize(mode as Number) {
         View.initialize();
-        quizModel = new QuizModel();
+        quizModel = new QuizModel(mode);
         selectedOption = 0;
         feedbackState = FEEDBACK_NONE;
         screenHeight = 0; // Sera initialisé dans onUpdate
@@ -56,25 +56,12 @@ class LanguageView extends WatchUi.View {
             return;
         }
         
-        // --- Zone supérieure: Hanzi (caractères chinois) ---
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(
-            centerX,
-            height * 0.15,
-            Graphics.FONT_SYSTEM_LARGE,
-            quizModel.getCurrentHanzi(),
-            Graphics.TEXT_JUSTIFY_CENTER
-        );
-        
-        // --- Pinyin (optionnel, petit texte sous le hanzi) ---
-        dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(
-            centerX,
-            height * 0.28,
-            Graphics.FONT_SYSTEM_XTINY,
-            quizModel.getCurrentPinyin(),
-            Graphics.TEXT_JUSTIFY_CENTER
-        );
+        // Afficher la question selon le mode
+        if (quizModel.getQuizMode() == QuizModel.MODE_NORMAL) {
+            drawNormalModeQuestion(dc, width, height, centerX);
+        } else {
+            drawReverseModeQuestion(dc, width, height, centerX);
+        }
         
         // --- Séparateur ---
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
@@ -99,6 +86,58 @@ class LanguageView extends WatchUi.View {
             Graphics.FONT_SYSTEM_XTINY,
             scoreText,
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+        );
+    }
+    
+    /**
+     * Affiche la question en mode normal (Hanzi → Français)
+     */
+    private function drawNormalModeQuestion(dc as Dc, width as Number, 
+                                           height as Number, centerX as Number) as Void {
+        // --- Zone supérieure: Hanzi (caractères chinois) ---
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(
+            centerX,
+            height * 0.15,
+            Graphics.FONT_SYSTEM_LARGE,
+            quizModel.getCurrentHanzi(),
+            Graphics.TEXT_JUSTIFY_CENTER
+        );
+        
+        // --- Pinyin (optionnel, petit texte sous le hanzi) ---
+        dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(
+            centerX,
+            height * 0.28,
+            Graphics.FONT_SYSTEM_XTINY,
+            quizModel.getCurrentPinyin(),
+            Graphics.TEXT_JUSTIFY_CENTER
+        );
+    }
+    
+    /**
+     * Affiche la question en mode inversé (Français → Hanzi)
+     */
+    private function drawReverseModeQuestion(dc as Dc, width as Number, 
+                                            height as Number, centerX as Number) as Void {
+        // --- Zone supérieure: Traduction française ---
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(
+            centerX,
+            height * 0.15,
+            Graphics.FONT_SYSTEM_MEDIUM,
+            quizModel.getCorrectTranslation(),
+            Graphics.TEXT_JUSTIFY_CENTER
+        );
+        
+        // --- Pinyin (indice) ---
+        dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(
+            centerX,
+            height * 0.28,
+            Graphics.FONT_SYSTEM_XTINY,
+            "(" + quizModel.getCurrentPinyin() + ")",
+            Graphics.TEXT_JUSTIFY_CENTER
         );
     }
     
@@ -166,18 +205,25 @@ class LanguageView extends WatchUi.View {
         } else {
             dc.drawText(centerX, centerY - 40, Graphics.FONT_SYSTEM_LARGE, 
                        "✗", Graphics.TEXT_JUSTIFY_CENTER);
-            dc.drawText(centerX, centerY - 10, Graphics.FONT_SYSTEM_MEDIUM, 
+            dc.drawText(centerX, centerY - 20, Graphics.FONT_SYSTEM_MEDIUM, 
                        "Incorrect", Graphics.TEXT_JUSTIFY_CENTER);
             
-            // Afficher la bonne réponse
+            // Afficher la bonne réponse selon le mode
             dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(centerX, centerY + 20, Graphics.FONT_SYSTEM_SMALL, 
-                       quizModel.getCorrectTranslation(), 
-                       Graphics.TEXT_JUSTIFY_CENTER);
-
-            dc.drawText(centerX, centerY + 60, Graphics.FONT_SYSTEM_XTINY, 
-                       "Sel:" + selectedOption + " Cor:" + quizModel.getCorrectAnswerPosition(), 
-                       Graphics.TEXT_JUSTIFY_CENTER);
+            if (quizModel.getQuizMode() == QuizModel.MODE_NORMAL) {
+                // Mode normal : afficher la traduction
+                dc.drawText(centerX, centerY + 10, Graphics.FONT_SYSTEM_SMALL, 
+                           quizModel.getCorrectTranslation(), 
+                           Graphics.TEXT_JUSTIFY_CENTER);
+            } else {
+                // Mode inversé : afficher le hanzi + pinyin
+                dc.drawText(centerX, centerY + 5, Graphics.FONT_SYSTEM_MEDIUM, 
+                           quizModel.getCurrentHanzi(), 
+                           Graphics.TEXT_JUSTIFY_CENTER);
+                dc.drawText(centerX, centerY + 30, Graphics.FONT_SYSTEM_XTINY, 
+                           quizModel.getCurrentPinyin(), 
+                           Graphics.TEXT_JUSTIFY_CENTER);
+            }
         }
     }
 
