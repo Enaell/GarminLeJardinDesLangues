@@ -11,11 +11,12 @@ Bienvenue dans la documentation du projet **Le Jardin des Langues** - Applicatio
 - Installation sur montre ou simulateur
 - Première utilisation avec le menu
 - Contrôles et astuces pour les 2 modes de quiz
+- Comment cacher/afficher le pinyin (v1.2+)
 
 ### Je veux comprendre le projet
 👉 **[../README.md](../README.md)** - Présentation générale (racine du projet)
 - Description de l'application
-- Fonctionnalités actuelles (menu + 2 modes de quiz)
+- Fonctionnalités actuelles (menu + 2 modes de quiz + pinyin masquable)
 - Architecture technique
 - Contenu pédagogique (vocabulaire HSK)
 
@@ -33,6 +34,7 @@ Bienvenue dans la documentation du projet **Le Jardin des Langues** - Applicatio
 
 ### Je veux voir l'historique des changements
 👉 **[CHANGELOG.md](CHANGELOG.md)** - Historique des versions
+- Notes de la version 1.2.0 (option pinyin masquable)
 - Notes de la version 1.1.0 (menu + mode inversé)
 - Historique complet depuis v1.0.0
 - Roadmap des versions futures
@@ -131,14 +133,15 @@ Language/
 
 | Métrique | Valeur |
 |----------|--------|
-| **Version actuelle** | 1.1.0 |
-| **Date release** | 20 oct 2025 |
-| **Lignes de code** | ~1,455 |
-| **Lignes documentation** | ~800 |
-| **Fichiers source** | 7 |
-| **Fichiers documentation** | 4 (nettoyé) |
+| **Version actuelle** | 1.2.0 |
+| **Date release** | 21 oct 2025 |
+| **Lignes de code** | ~1,500 |
+| **Lignes documentation** | ~850 |
+| **Fichiers source** | 8 |
+| **Fichiers documentation** | 5 |
 | **Mots HSK** | 300 |
 | **Modes de quiz** | 2 (Normal + Inversé) |
+| **Fonctionnalités** | Pinyin masquable |
 | **Appareils compatibles** | 6 modèles Fenix 8 |
 | **Langue interface** | Français |
 | **Langue contenu** | Mandarin |
@@ -214,10 +217,10 @@ A : Actuellement en développement. Compilez depuis le source ou attendez public
 
 ## 📅 Dernière Mise à Jour
 
-**Date** : 20 octobre 2025  
-**Version** : 1.1.0  
+**Date** : 21 octobre 2025  
+**Version** : 1.2.0  
 **État** : Stable - Production Ready ✅  
-**Dernière modification** : Menu d'accueil + Mode Quiz Inversé
+**Dernière modification** : Option Pinyin masquable via zone tactile
 
 ---
 
@@ -231,9 +234,8 @@ Pour toute question, consultez les fichiers listés ci-dessus. 📚
 ---
 
 **Navigation Rapide** :
-[README](README.md) | 
+[README](../README.md) | 
 [QUICKSTART](QUICKSTART.md) | 
 [DEVELOPMENT](DEVELOPMENT.md) | 
 [CHANGELOG](CHANGELOG.md) | 
-[PROJECT_SUMMARY](PROJECT_SUMMARY.md) | 
 [FUTURE_IDEAS](FUTURE_IDEAS.md)

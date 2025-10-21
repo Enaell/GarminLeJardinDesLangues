@@ -35,6 +35,10 @@ class LanguageDelegate extends WatchUi.InputDelegate {
             return true;
         } else if (key == WatchUi.KEY_ENTER) {
             return view.submitAnswer();
+        } else if (key == WatchUi.KEY_MENU) {
+            // Basculer l'affichage du pinyin
+            view.togglePinyin();
+            return true;
         }
         
         return false;
@@ -74,12 +78,12 @@ class LanguageDelegate extends WatchUi.InputDelegate {
     }
 
     /**
-     * Gestion du bouton MENU - Afficher le menu (optionnel)
+     * Gestion du bouton MENU - Basculer l'affichage du pinyin
      */
     function onMenu() as Boolean {
-        // Pour l'instant, pas de menu
-        // WatchUi.pushView(new Rez.Menus.MainMenu(), new LanguageMenuDelegate(), WatchUi.SLIDE_UP);
-        return false;
+        // Basculer l'affichage du pinyin
+        view.togglePinyin();
+        return true;
     }
 
 }

@@ -87,7 +87,7 @@
    ┌─────────────────────┐
    │                     │
    │        你好          │  ← Caractère chinois
-   │      nǐ hǎo         │  ← Prononciation
+   │      nǐ hǎo         │  ← Prononciation (MENU: cacher)
    ├─────────────────────┤
    │  1. bonjour     ◄   │  ← Option sélectionnée
    │  2. au revoir       │
@@ -103,7 +103,7 @@
    ┌─────────────────────┐
    │                     │
    │      Bonjour        │  ← Mot français
-   │      (nǐ hǎo)       │  ← Indice pinyin
+   │      (nǐ hǎo)       │  ← Indice pinyin (MENU: cacher)
    ├─────────────────────┤
    │  1. 你好        ◄   │  ← Option sélectionnée
    │  2. 再见            │
@@ -114,11 +114,19 @@
    └─────────────────────┘
    ```
 
-3. **Choisissez votre méthode de réponse**
+3. **Afficher/Cacher le Pinyin (v1.2+)** 🆕
+   - Appuyez sur le bouton **MENU** pour basculer l'affichage du pinyin
+   - **Pinyin caché** : Plus difficile, meilleur pour la mémorisation
+   - **Pinyin visible** : Aide à la prononciation
+   - L'indicateur `[MENU: Pinyin]` s'affiche quand le pinyin est caché
+   - Votre choix est conservé pour toutes les questions suivantes
+
+4. **Choisissez votre méthode de réponse**
    
    **Méthode 1 : Navigation avec boutons**
    - Bouton UP (Haut) : Remonter dans la liste
    - Bouton DOWN (Bas) : Descendre dans la liste
+   - Bouton MENU : Afficher/Cacher le pinyin 🆕
    - L'option sélectionnée a un fond bleu
    - START/SELECT : Valider la réponse sélectionnée
    
@@ -160,9 +168,10 @@
    - Utilisez le pinyin comme indice si besoin
    - Renforcez votre mémoire visuelle des caractères
 
-3. **Mode Challenge**
+3. **Mode Challenge (v1.2+)** 🆕
    - Alternez entre les 2 modes de quiz
-   - Essayez de reconnaître sans lire le pinyin
+   - **Cachez le pinyin** pour augmenter la difficulté (bouton MENU)
+   - Essayez de reconnaître les caractères sans aide
    - Visez un taux de réussite > 80%
 
 4. **Mode Révision**
@@ -214,6 +223,7 @@
 |--------|--------|
 | ⬆️ | Option précédente |
 | ⬇️ | Option suivante |
+| M | Afficher/Cacher le pinyin (MENU) 🆕 |
 | ↩️ | Valider la réponse sélectionnée |
 | 🖱️ Clic | Sélectionner + valider directement l'option cliquée |
 | Esc | Quitter |
@@ -251,9 +261,10 @@ rm -rf bin/*
 ### Après avoir maîtrisé les bases
 1. ✅ Atteignez 70% de réussite sur 50 questions en mode normal
 2. ✅ Testez le mode inversé pour renforcer la mémorisation
-3. 📚 Révisez les mots difficiles (notez-les)
-4. 🎯 Essayez de reconnaître les caractères sans le pinyin
-5. 🚀 Attendez la v1.2 pour les statistiques détaillées et la persistance
+3. ✅ Cachez le pinyin pour augmenter la difficulté (v1.2+)
+4. 📚 Révisez les mots difficiles (notez-les)
+5. 🎯 Essayez de reconnaître les caractères sans aucune aide
+6. 🚀 Attendez la v1.3 pour les statistiques détaillées
 
 ### Pour contribuer au projet
 - Consultez `DEVELOPMENT.md` pour le guide développeur
@@ -271,4 +282,4 @@ rm -rf bin/*
 
 **Bon apprentissage ! 加油！(jiā yóu - courage !)**
 
-*Dernière mise à jour : 20 octobre 2025*
+*Dernière mise à jour : 21 octobre 2025*

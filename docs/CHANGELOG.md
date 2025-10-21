@@ -12,6 +12,52 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Statistiques détaillées de progression
 - Filtrage par niveau HSK
 
+## [1.2.0] - 2025-10-21
+
+### ✨ Ajouté
+- **Option Afficher/Cacher le Pinyin** 🎉
+  - Clic sur la zone du pinyin (haut de l'écran) pour basculer l'affichage du pinyin pendant le quiz
+  - État persistant : le choix est conservé entre les questions et les sessions
+  - Indicateur visuel `[Tap: Pinyin]` affiché quand le pinyin est caché
+  - Fonctionne dans les deux modes (Normal et Inversé)
+
+### Modifié
+- **QuizModel**
+  - Ajout de la variable statique `showPinyin` pour conserver l'état
+  - Nouvelles méthodes : `togglePinyin()`, `isPinyinVisible()`, `showPinyinDisplay()`, `hidePinyinDisplay()`
+
+- **LanguageView**
+  - `drawNormalModeQuestion()` : Affichage conditionnel du pinyin
+  - `drawReverseModeQuestion()` : Affichage conditionnel du pinyin
+  - Nouvelle méthode `togglePinyin()` pour basculer et rafraîchir l'écran
+
+- **LanguageView**
+  - `handleTapAt()` : Détecte maintenant les clics dans la zone supérieure (0-35% de l'écran) pour basculer le pinyin
+
+### Comportement
+```
+Mode Normal (Pinyin visible):
+你好
+nǐ hǎo        ← Cliquez ici pour cacher
+
+Mode Normal (Pinyin caché):
+你好
+[Tap: Pinyin] ← Cliquez ici pour afficher
+
+Mode Inversé (Pinyin visible):
+Bonjour
+(nǐ hǎo)      ← Cliquez ici pour cacher
+
+Mode Inversé (Pinyin caché):
+Bonjour
+[Tap: Pinyin] ← Cliquez ici pour afficher
+```
+
+### Notes Techniques
+- Utilisation d'une variable statique pour persister l'état sans consommer de mémoire additionnelle
+- L'indicateur `[MENU: Pinyin]` guide l'utilisateur sur comment réafficher le pinyin
+- Rafraîchissement immédiat de l'écran avec `WatchUi.requestUpdate()`
+
 ## [1.1.0] - 2025-10-20
 
 ### ✨ Ajouté
@@ -186,13 +232,12 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## Roadmap Prévue
 
-### Version 1.1.0 (Décembre 2025)
-- Ajout d'un menu de démarrage
+### Version 1.3.0 (Décembre 2025)
 - Statistiques de session (taux de réussite)
-- Option pour afficher/masquer le pinyin
 - Amélioration de l'interface (polices adaptatives)
+- Paramètres personnalisables
 
-### Version 1.2.0 (Janvier 2026)
+### Version 1.4.0 (Janvier 2026)
 - Persistance des données (sauvegarde du score)
 - Historique des sessions
 - Compteur de séries de bonnes réponses

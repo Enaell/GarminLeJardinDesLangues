@@ -101,6 +101,9 @@ enum {
 
 **Variables d'état** :
 ```monkeyc
+// Variable statique pour conserver l'état du pinyin entre les sessions
+static private var showPinyin as Boolean = true;
+
 private var quizMode             // Mode actuel (NORMAL/REVERSE)
 private var currentWordIndex      // Index du mot actuel
 private var options               // Array des 4 options de réponse
@@ -132,6 +135,10 @@ private var totalQuestions       // Nombre total de questions
 - `getScore()` : Récupère le score actuel
 - `getQuizMode()` : Retourne le mode actuel (v1.1+)
 - `getCorrectAnswerPosition()` : Retourne la position de la bonne réponse (0-3)
+- `togglePinyin()` : Bascule l'affichage du pinyin (v1.2+)
+- `isPinyinVisible()` : Retourne l'état actuel du pinyin (v1.2+)
+- `showPinyinDisplay()` : Active l'affichage du pinyin (v1.2+)
+- `hidePinyinDisplay()` : Désactive l'affichage du pinyin (v1.2+)
 
 ### 3. LanguageView.mc
 **Rôle** : Affichage de l'interface utilisateur du quiz
@@ -178,18 +185,20 @@ private var feedbackState    // État du feedback (NONE/CORRECT/INCORRECT)
 **Rendu** :
 - `initialize(mode)` : Constructeur avec mode de quiz (v1.1+)
 - `onUpdate(dc)` : Méthode principale de rendu (appelle la bonne méthode selon le mode)
-- `drawNormalModeQuestion(dc)` : Dessine question Hanzi → Français (v1.1+)
-- `drawReverseModeQuestion(dc)` : Dessine question Français → Hanzi (v1.1+)
+- `drawNormalModeQuestion(dc)` : Dessine question Hanzi → Français (v1.1+, affichage conditionnel du pinyin v1.2+)
+- `drawReverseModeQuestion(dc)` : Dessine question Français → Hanzi (v1.1+, affichage conditionnel du pinyin v1.2+)
 - `drawOption(dc, index, y, width, height)` : Dessine une option
 - `drawFeedback(dc)` : Dessine l'écran de feedback (adapté selon le mode)
+- `togglePinyin()` : Bascule l'affichage du pinyin et rafraîchit l'écran (v1.2+)
 
 **Interactions** :
 - `selectPreviousOption()` : Navigation vers l'option précédente (bouton UP)
 - `selectNextOption()` : Navigation vers l'option suivante (bouton DOWN)
 - `selectOptionByIndex(index)` : Sélection directe d'une option (pour tactile)
-- `handleTapAt(y)` : Calcule quelle option a été cliquée selon position Y
+- `handleTapAt(y)` : Calcule quelle option a été cliquée selon position Y, ou bascule le pinyin si clic en haut (v1.2+)
 - `submitAnswer()` : Valide la réponse et affiche le feedback
 - `nextQuestion()` : Passe à la question suivante
+- `togglePinyin()` : Bascule l'affichage du pinyin et rafraîchit l'écran (v1.2+)
 
 **Couleurs** :
 ```monkeyc
@@ -223,7 +232,10 @@ onSelect()       → START → submitAnswer() (legacy)
 onBack()         → BACK  → Retour au menu (v1.1+)
 
 // Écran tactile
-onTap(clickEvent) → TOUCH → handleTapAt(y) → Sélection + validation directe
+onTap(clickEvent) → TOUCH → handleTapAt(y) → {
+    - Si y < 35% : togglePinyin() (v1.2+)
+    - Si y >= 40% : Sélection + validation directe d'une option
+}
 ```
 
 **Méthodes principales** :
@@ -278,6 +290,38 @@ onTap(clickEvent) → TOUCH → handleTapAt(y) → Sélection + validation direc
 ```
 
 ## 🎨 Personnalisation
+
+### Affichage du Pinyin (v1.2+)
+
+**Fonctionnalité** : L'utilisateur peut cacher/afficher le pinyin pendant le quiz.
+
+**Comment l'utiliser** :
+- Appuyer sur le bouton **MENU** pendant le quiz pour basculer l'affichage
+- L'état est conservé entre les sessions (variable statique)
+- Un indicateur `[MENU: Pinyin]` s'affiche quand le pinyin est caché
+
+**Comportement** :
+```monkeyc
+// Mode Normal (Hanzi → Français)
+Pinyin visible: 你好
+               nǐ hǎo
+
+Pinyin caché:   你好
+               [MENU: Pinyin]
+
+// Mode Inversé (Français → Hanzi)
+Pinyin visible: Bonjour
+               (nǐ hǎo)
+
+Pinyin caché:   Bonjour
+               [MENU: Pinyin]
+```
+
+**Implémentation** :
+- Variable statique `showPinyin` dans `QuizModel` (conservée entre les quiz)
+- Méthodes `togglePinyin()`, `isPinyinVisible()` pour la gestion
+- Rendu conditionnel dans `drawNormalModeQuestion()` et `drawReverseModeQuestion()`
+- Zone tactile dédiée dans `handleTapAt()` : les clics dans le haut de l'écran (0-35%) basculent le pinyin
 
 ### Modifier les Couleurs
 Dans `LanguageView.mc` :
@@ -433,6 +477,9 @@ class MyClass extends WatchUi.View {
 - [ ] Pas de répétition immédiate des mots
 - [ ] Toutes les 4 options sont différentes
 - [ ] Le bouton BACK quitte l'application
+- [ ] Le bouton MENU bascule l'affichage du pinyin (v1.2+)
+- [ ] L'état du pinyin est conservé entre les questions (v1.2+)
+- [ ] L'indicateur `[MENU: Pinyin]` s'affiche quand le pinyin est caché (v1.2+)
 
 ## 📚 Ressources
 

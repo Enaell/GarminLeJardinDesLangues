@@ -13,6 +13,9 @@ class QuizModel {
         MODE_REVERSE = 1   // Français → Hanzi
     }
     
+    // Variable statique pour conserver l'état du pinyin entre les sessions
+    static private var showPinyin as Boolean = true;
+    
     private var currentWordIndex as Number;
     private var options as Array<String>;
     private var correctAnswerPosition as Number;
@@ -259,5 +262,35 @@ class QuizModel {
      */
     function getQuizMode() as Number {
         return quizMode;
+    }
+    
+    /**
+     * Bascule l'affichage du pinyin
+     * @return Le nouvel état (true = affiché, false = caché)
+     */
+    static function togglePinyin() as Boolean {
+        showPinyin = !showPinyin;
+        return showPinyin;
+    }
+    
+    /**
+     * Retourne l'état actuel de l'affichage du pinyin
+     */
+    static function isPinyinVisible() as Boolean {
+        return showPinyin;
+    }
+    
+    /**
+     * Active l'affichage du pinyin
+     */
+    static function showPinyinDisplay() as Void {
+        showPinyin = true;
+    }
+    
+    /**
+     * Désactive l'affichage du pinyin
+     */
+    static function hidePinyinDisplay() as Void {
+        showPinyin = false;
     }
 }

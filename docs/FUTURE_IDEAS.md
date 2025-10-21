@@ -4,18 +4,28 @@ Ce document liste les idées d'améliorations et fonctionnalités supplémentair
 
 ---
 
-## 🎯 Version 1.1 - Améliorations Immédiates
+## ✅ Version 1.1 - RÉALISÉ (20 oct 2025)
 
-### Menu de Démarrage
-**Priorité** : Haute  
-**Complexité** : Faible  
+### Menu de Démarrage ✅
+**Statut** : IMPLÉMENTÉ  
 **Description** :
-- Écran d'accueil avec options :
-  - Commencer Quiz
-  - Voir Statistiques
-  - Paramètres
-  - Quitter
-- Utilisation de `WatchUi.Menu2` pour interface native
+- ✅ Écran d'accueil avec 2 options de quiz
+- ✅ Quiz Normal (Hanzi → Français)
+- ✅ Quiz Inversé (Français → Hanzi)
+- ✅ Navigation tactile + boutons
+- ✅ Transitions fluides
+
+## ✅ Version 1.2 - RÉALISÉ (21 oct 2025)
+
+### Option Pinyin Masquable ✅
+**Statut** : IMPLÉMENTÉ  
+**Description** :
+- ✅ Clic sur zone du pinyin pour cacher/afficher
+- ✅ État persistant entre questions
+- ✅ Indicateur visuel `[Tap: Pinyin]`
+- ✅ Fonctionne dans les 2 modes
+
+## 🎯 Version 1.3 - Prochaines Améliorations
 
 ### Statistiques de Session
 **Priorité** : Haute  
@@ -28,18 +38,18 @@ Ce document liste les idées d'améliorations et fonctionnalités supplémentair
   - Temps écoulé
 - Bouton "Continuer" ou "Nouvelle session"
 
-### Paramètres
+### Écran de Paramètres
 **Priorité** : Moyenne  
-**Complexité** : Faible  
+**Complexité** : Moyenne  
 **Description** :
-- Afficher/masquer le pinyin
-- Nombre de questions par session
+- Nombre de questions par session (10/20/30/50)
 - Niveau de difficulté (HSK 1, HSK 2, ou mixte)
 - Délai feedback (1-3 secondes)
+- Thème (clair/sombre)
 
 ---
 
-## 📊 Version 1.2 - Persistance des Données
+## 📊 Version 1.4 - Persistance des Données
 
 ### Sauvegarde du Score
 **Priorité** : Haute  
@@ -118,15 +128,13 @@ Ce document liste les idées d'améliorations et fonctionnalités supplémentair
 
 ## 🔄 Version 2.1 - Modes Alternatifs
 
-### Mode Inverse (Français → Mandarin)
-**Priorité** : Haute  
-**Complexité** : Moyenne  
+### ~~Mode Inverse (Français → Mandarin)~~ ✅
+**Statut** : RÉALISÉ dans v1.1  
 **Description** :
-- Afficher traduction française
-- Proposer 4 hanzi en options
-- Même logique mais inversée
-- Option dans menu principal
-- Statistiques séparées
+- ✅ Affiche traduction française
+- ✅ Propose 4 hanzi en options
+- ✅ Option dans menu principal
+- ✅ Pinyin comme indice
 
 ### Mode Pinyin
 **Priorité** : Moyenne  
@@ -332,10 +340,15 @@ Ce document liste les idées d'améliorations et fonctionnalités supplémentair
 
 ## 🎯 Priorisation Globale
 
-### Must Have (v1.1-1.2)
-1. Menu de démarrage
+### ✅ Réalisé (v1.1-1.2)
+1. ✅ Menu de démarrage (v1.1)
+2. ✅ Mode inversé (v1.1)
+3. ✅ Option pinyin masquable (v1.2)
+
+### Must Have (v1.3-1.4)
+1. Statistiques de session
 2. Sauvegarde du score
-3. Statistiques de session
+3. Paramètres de base
 
 ### Should Have (v2.0)
 1. Mode révision mots difficiles
@@ -343,10 +356,10 @@ Ce document liste les idées d'améliorations et fonctionnalités supplémentair
 3. Système SRS
 
 ### Nice to Have (v2.1-3.0)
-1. Mode inverse
-2. Graphiques de progression
-3. Thèmes visuels
-4. HSK 3-4
+1. Graphiques de progression
+2. Thèmes visuels
+3. HSK 3-4
+4. Mode Pinyin
 
 ### Won't Have (probablement jamais)
 1. Mode multijoueur

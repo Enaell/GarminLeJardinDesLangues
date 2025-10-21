@@ -4,10 +4,11 @@ Application Garmin Connect IQ pour apprendre le vocabulaire mandarin des niveaux
 
 ## 📱 Fonctionnalités
 
-### Version 1.1 - Implémentée ✅
+### Version 1.2 - Implémentée ✅
 - ✅ **Écran d'accueil avec menu** : Choisissez votre type de quiz
 - ✅ **Quiz Normal (Hanzi → Français)** : Voir un caractère chinois et trouver sa traduction
 - ✅ **Quiz Inversé (Français → Hanzi)** : Voir un mot français et trouver le bon caractère chinois
+- ✅ **Afficher/Cacher le Pinyin** : Bouton MENU pour basculer l'affichage du pinyin pendant le quiz (état conservé) 🆕
 - ✅ **Quiz à choix multiples** : 4 options de réponse par question
 - ✅ **Vocabulaire complet HSK 1 & 2** : ~300 mots avec caractères chinois, pinyin et traductions françaises
 - ✅ **Affichage des hanzi** : Les polices système de Garmin affichent correctement les caractères chinois sur Fenix 8
@@ -39,10 +40,20 @@ Au lancement, vous verrez un écran d'accueil avec 2 options :
 - **Bouton UP (Haut)** : Option précédente
 - **Bouton DOWN (Bas)** : Option suivante
 - **Bouton SELECT/START** : Valider la réponse sélectionnée
+- **Clic sur la zone du pinyin (haut de l'écran)** : Afficher/Cacher le pinyin 🆕
 - **Clic tactile sur une option** : Sélectionner et valider directement cette option
 - **Bouton BACK** : Retourner au menu de sélection
 
 ### Comment jouer
+
+#### Option Pinyin (v1.2+) 🆕
+À tout moment pendant le quiz, vous pouvez **cliquer sur la zone du pinyin** (en haut de l'écran) pour :
+- **Cacher le pinyin** : Si vous voulez un défi plus difficile
+- **Afficher le pinyin** : Si vous avez besoin d'aide pour la prononciation
+
+Quand le pinyin est caché, l'indicateur `[Tap: Pinyin]` s'affiche pour vous rappeler comment le réafficher.
+
+**Votre choix est conservé** : Si vous cachez le pinyin, il restera caché pour toutes les questions suivantes jusqu'à ce que vous le réaffichiez.
 
 #### Quiz Normal (Hanzi → Français)
 1. Lancez l'application sur votre Fenix 8
@@ -168,10 +179,10 @@ Exemple :
 
 ## 🚀 Roadmap
 
-### Version 1.1
-- Ajout d'un menu de démarrage
+### Version 1.3
 - Statistiques de session (taux de réussite)
-- Option pour afficher/masquer le pinyin
+- Amélioration de l'interface (polices adaptatives)
+- Paramètres personnalisables
 
 ### Version 2.0
 - Persistance des données (sauvegarde du score)

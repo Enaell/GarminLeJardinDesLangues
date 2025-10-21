@@ -105,14 +105,26 @@ class LanguageView extends WatchUi.View {
         );
         
         // --- Pinyin (optionnel, petit texte sous le hanzi) ---
-        dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(
-            centerX,
-            height * 0.28,
-            Graphics.FONT_SYSTEM_XTINY,
-            quizModel.getCurrentPinyin(),
-            Graphics.TEXT_JUSTIFY_CENTER
-        );
+        if (QuizModel.isPinyinVisible()) {
+            dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(
+                centerX,
+                height * 0.28,
+                Graphics.FONT_SYSTEM_XTINY,
+                quizModel.getCurrentPinyin(),
+                Graphics.TEXT_JUSTIFY_CENTER
+            );
+        } else {
+            // Indicateur que le pinyin est caché - Cliquer ici pour afficher
+            dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(
+                centerX,
+                height * 0.28,
+                Graphics.FONT_SYSTEM_XTINY,
+                "[Tap: Pinyin]",
+                Graphics.TEXT_JUSTIFY_CENTER
+            );
+        }
     }
     
     /**
@@ -131,14 +143,26 @@ class LanguageView extends WatchUi.View {
         );
         
         // --- Pinyin (indice) ---
-        dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(
-            centerX,
-            height * 0.28,
-            Graphics.FONT_SYSTEM_XTINY,
-            "(" + quizModel.getCurrentPinyin() + ")",
-            Graphics.TEXT_JUSTIFY_CENTER
-        );
+        if (QuizModel.isPinyinVisible()) {
+            dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(
+                centerX,
+                height * 0.28,
+                Graphics.FONT_SYSTEM_XTINY,
+                "(" + quizModel.getCurrentPinyin() + ")",
+                Graphics.TEXT_JUSTIFY_CENTER
+            );
+        } else {
+            // Indicateur que le pinyin est caché - Cliquer ici pour afficher
+            dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(
+                centerX,
+                height * 0.28,
+                Graphics.FONT_SYSTEM_XTINY,
+                "[Tap: Pinyin]",
+                Graphics.TEXT_JUSTIFY_CENTER
+            );
+        }
     }
     
     /**
@@ -280,6 +304,7 @@ class LanguageView extends WatchUi.View {
     /**
      * Gère un clic/tap à une position Y donnée
      * Calcule quelle option a été cliquée et la sélectionne/valide
+     * Ou bascule le pinyin si clic en haut de l'écran
      */
     function handleTapAt(y as Number) as Boolean {
         if (feedbackState != FEEDBACK_NONE) {
@@ -291,6 +316,13 @@ class LanguageView extends WatchUi.View {
         // Utiliser la hauteur d'écran sauvegardée
         if (screenHeight == 0) {
             return false; // Pas encore initialisé
+        }
+        
+        // Zone supérieure (0-35% de l'écran) : Basculer le pinyin
+        var pinyinZoneEnd = (screenHeight * 35) / 100;
+        if (y < pinyinZoneEnd) {
+            togglePinyin();
+            return true;
         }
         
         var optionStartY = (screenHeight * 40) / 100;
@@ -347,6 +379,14 @@ class LanguageView extends WatchUi.View {
      */
     function getQuizModel() as QuizModel {
         return quizModel;
+    }
+    
+    /**
+     * Bascule l'affichage du pinyin
+     */
+    function togglePinyin() as Void {
+        QuizModel.togglePinyin();
+        WatchUi.requestUpdate();
     }
 
 }
