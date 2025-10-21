@@ -368,4 +368,30 @@ class VocabularyData {
     static function getHskLevel(index as Number) as Number {
         return getWordByIndex(index)[3] as Number;
     }
+    
+    /**
+     * Définit le statut de maîtrise d'un mot
+     * @param index Index du mot
+     * @param status Statut (WordProgressStorage.STATUS_MASTERED/KNOWN/UNKNOWN)
+     */
+    static function setWordStatus(index as Number, status as Number) as Void {
+        WordProgressStorage.setWordStatus(index, status);
+    }
+    
+    /**
+     * Récupère le statut de maîtrise d'un mot
+     * @param index Index du mot
+     * @return Statut (WordProgressStorage.STATUS_MASTERED/KNOWN/UNKNOWN)
+     */
+    static function getWordStatus(index as Number) as Number {
+        return WordProgressStorage.getWordStatus(index);
+    }
+    
+    /**
+     * Récupère les statistiques de progression
+     * @return Dictionary avec "mastered", "known", "unknown"
+     */
+    static function getProgressStatistics() as Dictionary<String, Number> {
+        return WordProgressStorage.getStatistics();
+    }
 }

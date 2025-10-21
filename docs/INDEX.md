@@ -12,11 +12,12 @@ Bienvenue dans la documentation du projet **Le Jardin des Langues** - Applicatio
 - Première utilisation avec le menu
 - Contrôles et astuces pour les 2 modes de quiz
 - Comment cacher/afficher le pinyin (v1.2+)
+- Comment évaluer les mots (v1.3+)
 
 ### Je veux comprendre le projet
 👉 **[../README.md](../README.md)** - Présentation générale (racine du projet)
 - Description de l'application
-- Fonctionnalités actuelles (menu + 2 modes de quiz + pinyin masquable)
+- Fonctionnalités actuelles (menu + 2 modes + pinyin masquable + évaluation optionnelle)
 - Architecture technique
 - Contenu pédagogique (vocabulaire HSK)
 
@@ -30,26 +31,23 @@ Bienvenue dans la documentation du projet **Le Jardin des Langues** - Applicatio
 - Composants principaux (MenuView, QuizModel, etc.)
 - Flux de données
 - Guide de personnalisation
-- Optimisations et débogage
+## 📋 Informations Projet
 
-### Je veux voir l'historique des changements
+### Historique des versions
 👉 **[CHANGELOG.md](CHANGELOG.md)** - Historique des versions
+- Notes de la version 1.3.0 (système de persistance optionnel)
 - Notes de la version 1.2.0 (option pinyin masquable)
 - Notes de la version 1.1.0 (menu + mode inversé)
 - Historique complet depuis v1.0.0
 - Roadmap des versions futures
 - Format standardisé (Keep a Changelog)
 
----
-
-## 📋 Informations Projet
-
 ### Idées pour le futur
 👉 **[FUTURE_IDEAS.md](FUTURE_IDEAS.md)** - Améliorations potentielles
-- Fonctionnalités v1.2, v2.0, v3.0
-- Persistance des données
-- Statistiques avancées
+- Fonctionnalités futures (v2.0+)
+- Améliorations de l'interface
 - Contenu supplémentaire (HSK 3-6)
+- Modes de révision avancés
 
 ---
 
@@ -73,7 +71,7 @@ Language/
 │   ├── LanguageDelegate.mc     (Interactions du quiz)
 │   ├── QuizModel.mc            (Logique du quiz)
 │   ├── VocabularyData.mc       (Base de données HSK)
-│   └── LanguageMenuDelegate.mc (Menu système - non utilisé)
+│   └── WordProgressStorage.mc  (Persistance des évaluations)
 │
 ├── 📁 resources/             ← Ressources
 │   ├── strings/strings.xml     (Textes interface)
@@ -133,19 +131,20 @@ Language/
 
 | Métrique | Valeur |
 |----------|--------|
-| **Version actuelle** | 1.2.0 |
-| **Date release** | 21 oct 2025 |
-| **Lignes de code** | ~1,500 |
-| **Lignes documentation** | ~850 |
+| **Version actuelle** | 1.3.0 |
+| **Date release** | 22 oct 2025 |
+| **Lignes de code** | ~1,700 |
+| **Lignes documentation** | ~1,000 |
 | **Fichiers source** | 8 |
 | **Fichiers documentation** | 5 |
 | **Mots HSK** | 300 |
 | **Modes de quiz** | 2 (Normal + Inversé) |
-| **Fonctionnalités** | Pinyin masquable |
+| **Fonctionnalités** | Pinyin masquable + Évaluation optionnelle |
 | **Appareils compatibles** | 6 modèles Fenix 8 |
 | **Langue interface** | Français |
 | **Langue contenu** | Mandarin |
 | **Modes de contrôle** | Boutons + Tactile |
+| **Persistance** | Oui (Storage API) |
 
 ---
 
@@ -217,10 +216,10 @@ A : Actuellement en développement. Compilez depuis le source ou attendez public
 
 ## 📅 Dernière Mise à Jour
 
-**Date** : 21 octobre 2025  
-**Version** : 1.2.0  
+**Date** : 22 octobre 2025  
+**Version** : 1.3.0  
 **État** : Stable - Production Ready ✅  
-**Dernière modification** : Option Pinyin masquable via zone tactile
+**Dernière modification** : Système de persistance optionnel pour évaluer les mots
 
 ---
 

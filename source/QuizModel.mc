@@ -293,4 +293,32 @@ class QuizModel {
     static function hidePinyinDisplay() as Void {
         showPinyin = false;
     }
+    
+    /**
+     * Définit le statut de maîtrise du mot actuel
+     * @param status Statut (WordProgressStorage.STATUS_MASTERED/KNOWN/UNKNOWN)
+     */
+    function setCurrentWordStatus(status as Number) as Void {
+        if (currentWordIndex >= 0) {
+            VocabularyData.setWordStatus(currentWordIndex, status);
+        }
+    }
+    
+    /**
+     * Récupère le statut de maîtrise du mot actuel
+     * @return Statut (WordProgressStorage.STATUS_MASTERED/KNOWN/UNKNOWN)
+     */
+    function getCurrentWordStatus() as Number {
+        if (currentWordIndex >= 0) {
+            return VocabularyData.getWordStatus(currentWordIndex);
+        }
+        return WordProgressStorage.STATUS_UNKNOWN;
+    }
+    
+    /**
+     * Retourne l'index du mot actuel
+     */
+    function getCurrentWordIndex() as Number {
+        return currentWordIndex;
+    }
 }

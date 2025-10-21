@@ -4,15 +4,16 @@
 1. [Architecture](#architecture)
 2. [Composants Principaux](#composants-principaux)
 3. [Flux de Données](#flux-de-données)
-4. [Personnalisation](#personnalisation)
-5. [Optimisation](#optimisation)
-6. [Débogage](#débogage)
+4. [Persistance des Données](#persistance-des-données)
+5. [Personnalisation](#personnalisation)
+6. [Optimisation](#optimisation)
+7. [Débogage](#débogage)
 
 ## 🏗️ Architecture
 
 ### Vue d'Ensemble
 L'application suit le pattern MVC (Model-View-Controller) adapté à Monkey C :
-- **Model** : `QuizModel.mc` + `VocabularyData.mc`
+- **Model** : `QuizModel.mc` + `VocabularyData.mc` + `WordProgressStorage.mc`
 - **View** : `MenuView.mc` + `LanguageView.mc`
 - **Controller** : `MenuDelegate.mc` + `LanguageDelegate.mc`
 
@@ -31,10 +32,16 @@ LanguageApp (entry point)
     │   QuizModel (logique + mode)
     │       ↓
     │   VocabularyData (données)
+    │       ↓
+    │   WordProgressStorage (persistance)
     │
     └─→ LanguageDelegate (interactions quiz)
             ↓
         LanguageView (mise à jour)
+            ↓
+        [Feedback → Flaggage]
+            ↓
+        WordProgressStorage (sauvegarde statut)
 ```
 
 ## 🔧 Composants Principaux
@@ -81,6 +88,9 @@ enum QuizMode {
 - `getPinyin(index)` : Récupère uniquement le pinyin
 - `getTranslation(index)` : Récupère uniquement la traduction
 - `getHskLevel(index)` : Récupère le niveau HSK
+- `setWordStatus(index, status)` : Définit le statut de maîtrise d'un mot (v1.3+)
+- `getWordStatus(index)` : Récupère le statut de maîtrise d'un mot (v1.3+)
+- `getProgressStatistics()` : Récupère les statistiques de progression (v1.3+)
 
 **Ajout de nouveaux mots** :
 ```monkeyc
@@ -139,7 +149,54 @@ private var totalQuestions       // Nombre total de questions
 - `isPinyinVisible()` : Retourne l'état actuel du pinyin (v1.2+)
 - `showPinyinDisplay()` : Active l'affichage du pinyin (v1.2+)
 - `hidePinyinDisplay()` : Désactive l'affichage du pinyin (v1.2+)
+- `setCurrentWordStatus(status)` : Enregistre le statut du mot actuel (v1.3+)
+- `getCurrentWordStatus()` : Récupère le statut du mot actuel (v1.3+)
+- `getCurrentWordIndex()` : Retourne l'index du mot actuel (v1.3+)
 
+### 2bis. WordProgressStorage.mc (v1.3+)
+**Rôle** : Gestion de la persistance des statuts de maîtrise des mots
+
+**Statuts possibles** :
+```monkeyc
+enum {
+    STATUS_MASTERED = 0,   // ✓ Mot maîtrisé
+    STATUS_KNOWN = 1,      // ○ Mot connu
+    STATUS_UNKNOWN = 2     // ✗ Mot inconnu
+}
+```
+
+**Stockage** :
+- Utilise le Storage API de Garmin Connect IQ
+- Clé : `"word_progress"`
+- Format : Dictionary<String, Number> (index → statut)
+- Persistant entre les sessions
+
+**Méthodes principales** :
+- `setWordStatus(index, status)` : Enregistre le statut d'un mot
+- `getWordStatus(index)` : Récupère le statut d'un mot (retourne STATUS_UNKNOWN par défaut)
+- `hasStatus(index)` : Vérifie si un mot a déjà été évalué
+- `getStatistics()` : Retourne les statistiques (nombre de mots par statut)
+- `getEvaluatedWordsCount()` : Nombre total de mots évalués
+- `getMasteredPercentage()` : Pourcentage de mots maîtrisés
+- `resetAllProgress()` : Réinitialise toutes les données (efface tout)
+
+**Exemple d'utilisation** :
+```monkeyc
+// Enregistrer qu'un mot est maîtrisé
+WordProgressStorage.setWordStatus(42, WordProgressStorage.STATUS_MASTERED);
+
+// Récupérer le statut
+var status = WordProgressStorage.getWordStatus(42);
+if (status == WordProgressStorage.STATUS_MASTERED) {
+    System.println("Ce mot est maîtrisé !");
+}
+
+// Obtenir les statistiques
+var stats = WordProgressStorage.getStatistics();
+System.println("Maîtrisés: " + stats["mastered"]);
+System.println("Connus: " + stats["known"]);
+System.println("Inconnus: " + stats["unknown"]);
+```
 ### 3. LanguageView.mc
 **Rôle** : Affichage de l'interface utilisateur du quiz
 
@@ -147,7 +204,18 @@ private var totalQuestions       // Nombre total de questions
 ```monkeyc
 private var quizModel        // Instance du modèle
 private var selectedOption   // Option actuellement sélectionnée (0-3)
-private var feedbackState    // État du feedback (NONE/CORRECT/INCORRECT)
+private var feedbackState    // État du feedback (NONE/CORRECT/INCORRECT/FLAGGING) (v1.3+)
+private var selectedFlag     // Option de flaggage sélectionnée (0-2) (v1.3+)
+```
+
+**États du feedback (v1.3+)** :
+```monkeyc
+enum {
+    FEEDBACK_NONE = 0,        // Pas de feedback, mode quiz normal
+    FEEDBACK_CORRECT = 1,     // Feedback bonne réponse
+    FEEDBACK_INCORRECT = 2,   // Feedback mauvaise réponse
+    FEEDBACK_FLAGGING = 3     // Mode flaggage (évaluation du mot)
+}
 ```
 
 **Layout de l'écran (Mode Normal)** :
@@ -182,21 +250,39 @@ private var feedbackState    // État du feedback (NONE/CORRECT/INCORRECT)
 └─────────────────────┘
 ```
 
+**Layout de l'écran de flaggage (v1.3+)** :
+```
+┌─────────────────────┐
+│ Niveau de maîtrise ?│  10% - Titre
+│       你好           │  22% - Mot concerné
+├─────────────────────┤  32% - Séparateur
+│   ✓ Maîtrisé    ◄   │  38-55% - Option 1 (vert)
+│   ○ Connu           │  55-72% - Option 2 (orange)
+│   ✗ Inconnu         │  72-89% - Option 3 (rouge)
+├─────────────────────┤
+│ ↑↓ • SELECT         │  93% - Instructions
+└─────────────────────┘
+```
+
 **Rendu** :
 - `initialize(mode)` : Constructeur avec mode de quiz (v1.1+)
 - `onUpdate(dc)` : Méthode principale de rendu (appelle la bonne méthode selon le mode)
 - `drawNormalModeQuestion(dc)` : Dessine question Hanzi → Français (v1.1+, affichage conditionnel du pinyin v1.2+)
 - `drawReverseModeQuestion(dc)` : Dessine question Français → Hanzi (v1.1+, affichage conditionnel du pinyin v1.2+)
 - `drawOption(dc, index, y, width, height)` : Dessine une option
-- `drawFeedback(dc)` : Dessine l'écran de feedback (adapté selon le mode)
+- `drawFeedback(dc)` : Dessine l'écran de feedback (adapté selon le mode, v1.3+ avec instruction pour évaluer)
+- `drawFlaggingScreen(dc)` : Dessine l'écran d'évaluation du mot (v1.3+)
+- `drawFlagOption(dc, index, y, width, height, label, color)` : Dessine une option de flaggage (v1.3+)
 - `togglePinyin()` : Bascule l'affichage du pinyin et rafraîchit l'écran (v1.2+)
 
 **Interactions** :
-- `selectPreviousOption()` : Navigation vers l'option précédente (bouton UP)
-- `selectNextOption()` : Navigation vers l'option suivante (bouton DOWN)
+- `selectPreviousOption()` : Navigation vers l'option précédente (bouton UP) - gère aussi le flaggage (v1.3+)
+- `selectNextOption()` : Navigation vers l'option suivante (bouton DOWN) - gère aussi le flaggage (v1.3+)
 - `selectOptionByIndex(index)` : Sélection directe d'une option (pour tactile)
-- `handleTapAt(y)` : Calcule quelle option a été cliquée selon position Y, ou bascule le pinyin si clic en haut (v1.2+)
-- `submitAnswer()` : Valide la réponse et affiche le feedback
+- `handleTapAt(y)` : Calcule quelle option a été cliquée selon position Y, ou bascule le pinyin si clic en haut (v1.2+), gère aussi les clics sur le flaggage (v1.3+)
+- `submitAnswer()` : Valide la réponse et affiche le feedback, ou passe au flaggage (v1.3+)
+- `moveToFlagging()` : Passe du feedback au mode flaggage (v1.3+)
+- `submitFlag()` : Enregistre le statut sélectionné et passe à la question suivante (v1.3+)
 - `nextQuestion()` : Passe à la question suivante
 - `togglePinyin()` : Bascule l'affichage du pinyin et rafraîchit l'écran (v1.2+)
 
@@ -274,9 +360,9 @@ onTap(clickEvent) → TOUCH → handleTapAt(y) → {
 5. LanguageView.onUpdate(dc) → Redessine l'écran
 ```
 
-### Validation d'une Réponse
+### Validation d'une Réponse et Flaggage (v1.3+)
 ```
-1. Utilisateur appuie sur SELECT
+1. Utilisateur appuie sur SELECT (ou clic tactile)
 2. LanguageDelegate.onSelect()
 3. LanguageView.submitAnswer()
    ├─→ QuizModel.checkAnswer(selectedOption)
@@ -284,12 +370,196 @@ onTap(clickEvent) → TOUCH → handleTapAt(y) → {
    └─→ Mettre feedbackState à CORRECT/INCORRECT
 4. WatchUi.requestUpdate()
 5. LanguageView.onUpdate(dc) → drawFeedback()
+   └─→ Affiche "Appuyez pour évaluer"
 6. [Utilisateur appuie à nouveau sur SELECT]
-7. LanguageView.nextQuestion()
-   └─→ QuizModel.generateNewQuestion()
+7. LanguageView.moveToFlagging()
+   └─→ feedbackState = FEEDBACK_FLAGGING
+8. WatchUi.requestUpdate()
+9. LanguageView.onUpdate(dc) → drawFlaggingScreen()
+   └─→ Affiche 3 options : Maîtrisé / Connu / Inconnu
+10. [Utilisateur navigue avec UP/DOWN et sélectionne avec SELECT]
+11. LanguageView.submitFlag()
+    ├─→ QuizModel.setCurrentWordStatus(status)
+    │   └─→ VocabularyData.setWordStatus(index, status)
+    │       └─→ WordProgressStorage.setWordStatus(index, status)
+    │           └─→ Storage.setValue("word_progress", data)
+    └─→ nextQuestion()
+```
+
+## 💾 Persistance des Données (v1.3+)
+
+### Vue d'Ensemble
+
+L'application utilise le **Storage API** de Garmin Connect IQ pour sauvegarder de manière persistante le niveau de maîtrise de chaque mot. Ces données survivent :
+- À la fermeture de l'application
+- Au redémarrage de la montre
+- Aux mises à jour de l'application (tant que l'ID ne change pas)
+
+### Flux de Persistance
+
+```
+[Utilisateur évalue un mot]
+        ↓
+LanguageView.submitFlag()
+        ↓
+QuizModel.setCurrentWordStatus(status)
+        ↓
+VocabularyData.setWordStatus(index, status)
+        ↓
+WordProgressStorage.setWordStatus(index, status)
+        ↓
+Storage.setValue("word_progress", Dictionary)
+        ↓
+[Sauvegardé sur la montre]
+```
+
+### Structure des Données Stockées
+
+**Format JSON équivalent** :
+```json
+{
+  "word_progress": {
+    "0": 0,    // Mot index 0 = Maîtrisé
+    "1": 1,    // Mot index 1 = Connu
+    "5": 2,    // Mot index 5 = Inconnu
+    "42": 0,   // Mot index 42 = Maîtrisé
+    ...
+  }
+}
+```
+
+**Signification des valeurs** :
+- `0` = `STATUS_MASTERED` (✓ Maîtrisé)
+- `1` = `STATUS_KNOWN` (○ Connu)
+- `2` = `STATUS_UNKNOWN` (✗ Inconnu)
+
+**Mots non évalués** : Si un mot n'apparaît pas dans le dictionnaire, il est considéré comme `STATUS_UNKNOWN` par défaut.
+
+### Limites du Storage
+
+**Capacités Garmin** :
+- Taille maximale : ~100-1000 KB selon les appareils
+- Pour 300 mots : ~2-3 KB utilisés (très léger)
+- Pas de limite de lecture/écriture
+
+**Bonnes pratiques** :
+- Une seule clé de stockage (`"word_progress"`)
+- Stockage d'un Dictionary simple (pas d'objets complexes)
+- Mise à jour atomique (remplacement complet du dictionnaire)
+
+### Récupération des Données
+
+Au démarrage de l'application, les données sont automatiquement chargées depuis le Storage :
+
+```monkeyc
+// Première fois : Storage retourne null
+var data = Storage.getValue("word_progress");
+if (data == null) {
+    data = {}; // Dictionnaire vide
+}
+
+// Ensuite : Storage retourne le Dictionary sauvegardé
+var status = data.get("42"); // Récupère le statut du mot 42
+```
+
+### Réinitialisation des Données
+
+Pour effacer toute la progression (utile pour un reset) :
+
+```monkeyc
+WordProgressStorage.resetAllProgress();
+// Efface toutes les données de progression
+```
+
+### Statistiques de Progression
+
+L'application peut calculer des statistiques en temps réel :
+
+```monkeyc
+var stats = WordProgressStorage.getStatistics();
+// Retourne : { "mastered" => X, "known" => Y, "unknown" => Z }
+
+var masteredPercent = WordProgressStorage.getMasteredPercentage();
+// Retourne : pourcentage de mots maîtrisés (0.0 - 100.0)
+
+var evaluatedCount = WordProgressStorage.getEvaluatedWordsCount();
+// Retourne : nombre de mots qui ont été évalués au moins une fois
+```
+
+### Cas d'Usage Avancés
+
+**Filtrer par statut** (future feature) :
+```monkeyc
+// Générer une question uniquement avec des mots "Inconnus"
+var unknownWords = [];
+for (var i = 0; i < VocabularyData.getVocabularySize(); i++) {
+    if (VocabularyData.getWordStatus(i) == WordProgressStorage.STATUS_UNKNOWN) {
+        unknownWords.add(i);
+    }
+}
+// Utiliser unknownWords pour le quiz
+```
+
+**Tri par difficulté** (future feature) :
+```monkeyc
+// Prioriser les mots non maîtrisés dans la génération des questions
+function getWeightedRandomWord() {
+    var index = Math.rand() % VocabularyData.getVocabularySize();
+    var status = VocabularyData.getWordStatus(index);
+    
+    // Ré-essayer si le mot est maîtrisé (60% du temps)
+    if (status == WordProgressStorage.STATUS_MASTERED && Math.rand() % 100 < 60) {
+        return getWeightedRandomWord();
+    }
+    
+    return index;
+}
+```
+
+### Debugging du Storage
+
+Pour afficher les données stockées en debug :
+
+```monkeyc
+// Dans LanguageApp.onStart()
+var data = Storage.getValue("word_progress");
+if (data != null) {
+    System.println("Mots enregistrés : " + data.size());
+    var keys = data.keys();
+    for (var i = 0; i < keys.size(); i++) {
+        var index = keys[i];
+        var status = data.get(index);
+        System.println("Mot " + index + " = " + status);
+    }
+}
 ```
 
 ## 🎨 Personnalisation
+
+### Évaluation des Mots (v1.3+)
+
+**Fonctionnalité** : Après chaque question, l'utilisateur peut évaluer son niveau de maîtrise du mot.
+
+**Workflow** :
+1. L'utilisateur répond à la question (correcte ou incorrecte)
+2. Le feedback s'affiche (vert ou rouge)
+3. Message "Appuyez pour évaluer" apparaît
+4. L'utilisateur appuie sur SELECT ou tape l'écran
+5. L'écran de flaggage s'affiche avec 3 options :
+   - ✓ **Maîtrisé** (vert) : Je connais parfaitement ce mot
+   - ○ **Connu** (orange) : Je reconnais ce mot mais je ne suis pas sûr
+   - ✗ **Inconnu** (rouge) : Ce mot m'est totalement inconnu
+6. L'utilisateur sélectionne une option avec UP/DOWN ou en tapant
+7. Le statut est enregistré et la question suivante s'affiche
+
+**Navigation** :
+- **Boutons physiques** : UP/DOWN pour naviguer, SELECT pour valider
+- **Écran tactile** : Taper directement sur l'option souhaitée
+
+**Persistance** :
+- Le statut est **immédiatement sauvegardé** dans le Storage
+- Il persiste entre les sessions
+- Peut être modifié à chaque nouvelle rencontre du mot
 
 ### Affichage du Pinyin (v1.2+)
 
@@ -470,7 +740,7 @@ class MyClass extends WatchUi.View {
 **Checklist de test** :
 - [ ] Les caractères chinois s'affichent correctement
 - [ ] Le pinyin est lisible
-- [ ] Navigation UP/DOWN fonctionne
+- [ ] Navigation UP/DOWN fonctionne dans le quiz
 - [ ] Sélection correcte → Fond vert
 - [ ] Sélection incorrecte → Fond rouge + correction
 - [ ] Score s'incrémente correctement
@@ -479,7 +749,16 @@ class MyClass extends WatchUi.View {
 - [ ] Le bouton BACK quitte l'application
 - [ ] Le bouton MENU bascule l'affichage du pinyin (v1.2+)
 - [ ] L'état du pinyin est conservé entre les questions (v1.2+)
-- [ ] L'indicateur `[MENU: Pinyin]` s'affiche quand le pinyin est caché (v1.2+)
+- [ ] L'indicateur `[Tap: Pinyin]` s'affiche quand le pinyin est caché (v1.2+)
+- [ ] L'écran de feedback s'affiche correctement (v1.3+)
+- [ ] Le message "Appuyez pour évaluer" apparaît après le feedback (v1.3+)
+- [ ] L'écran de flaggage s'affiche avec 3 options (v1.3+)
+- [ ] Navigation UP/DOWN fonctionne dans le flaggage (v1.3+)
+- [ ] Les couleurs des options de flaggage sont correctes (vert/orange/rouge) (v1.3+)
+- [ ] La sélection d'un statut enregistre les données (v1.3+)
+- [ ] Les statuts persistent après fermeture/réouverture de l'app (v1.3+)
+- [ ] Les clics tactiles fonctionnent sur les options de flaggage (v1.3+)
+- [ ] Le statut peut être modifié à chaque nouvelle rencontre du mot (v1.3+)
 
 ## 📚 Ressources
 

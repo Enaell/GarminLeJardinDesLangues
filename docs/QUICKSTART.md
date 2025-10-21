@@ -139,14 +139,35 @@
      - **Vert** ✓ si correct
      - **Rouge** ✗ si incorrect (+ affichage de la bonne réponse)
 
-5. **Passez au mot suivant**
-   - Appuyez sur START/SELECT ou cliquez sur l'écran
-   - Une nouvelle question apparaît
+5. **Évaluez le mot (Optionnel - v1.3+)** 🆕
+   - Après le feedback, vous avez 2 choix :
+     - **Cliquer sur "[ Évaluer ]"** en bas : Ouvrir l'écran d'évaluation
+     - **Cliquer ailleurs ou SELECT** : Passer directement au mot suivant
+   
+   **Si vous choisissez d'évaluer** :
+   ```
+   ┌─────────────────────┐
+   │ Niveau de maîtrise ?│
+   │       你好           │
+   ├─────────────────────┤
+   │   ✓ Maîtrisé        │  (vert)
+   │   ○ Connu       ◄   │  (orange) ← Sélectionné
+   │   ✗ Inconnu         │  (rouge)
+   └─────────────────────┘
+   ```
+   - **✓ Maîtrisé** : Vous connaissez parfaitement ce mot
+   - **○ Connu** : Vous reconnaissez le mot mais pas sûr
+   - **✗ Inconnu** : Ce mot vous est totalement inconnu
+   - Votre évaluation est **sauvegardée** et persiste entre les sessions
+   - Naviguez avec UP/DOWN ou cliquez directement
 
-6. **Suivez votre progression**
+6. **Passez au mot suivant**
+   - Une nouvelle question apparaît automatiquement
+
+7. **Suivez votre progression**
    - Le score en bas de l'écran s'actualise : `3/5` = 3 bonnes réponses sur 5 questions
 
-7. **Changez de mode**
+8. **Changez de mode**
    - Appuyez sur le bouton **BACK** pour retourner au menu
    - Choisissez l'autre mode de quiz
 
@@ -174,10 +195,14 @@
    - Essayez de reconnaître les caractères sans aide
    - Visez un taux de réussite > 80%
 
-4. **Mode Révision**
-   - Notez les mots que vous ratez souvent
-   - Refaites des sessions pour les revoir
-   - L'anti-répétition évite de voir le même mot 2 fois de suite
+4. **Mode Révision (v1.3+)** 🆕
+   - Évaluez les mots pour suivre votre progression
+   - Cliquez sur "[ Évaluer ]" pour marquer les mots :
+     - ✓ **Maîtrisé** : Mot parfaitement connu
+     - ○ **Connu** : Mot reconnu mais incertain
+     - ✗ **Inconnu** : Mot totalement inconnu
+   - Les évaluations sont sauvegardées entre les sessions
+   - Ou passez directement au mot suivant (évaluation optionnelle)
 
 ### 🎯 Objectifs Quotidiens
 
@@ -214,8 +239,9 @@
 - **Solution** : Fermer d'autres applications en arrière-plan
 
 ### Le score ne se sauvegarde pas
-- **C'est normal** : La version 1.0 ne persiste pas les données
-- **À venir** : Version 1.2 avec sauvegarde automatique
+- **C'est normal** : Le score de la session actuelle n'est pas persisté
+- **Mais** : Les évaluations de mots (v1.3+) sont sauvegardées automatiquement
+- **À venir** : Historique complet des sessions
 
 ## Raccourcis Clavier (Simulateur)
 
@@ -262,9 +288,10 @@ rm -rf bin/*
 1. ✅ Atteignez 70% de réussite sur 50 questions en mode normal
 2. ✅ Testez le mode inversé pour renforcer la mémorisation
 3. ✅ Cachez le pinyin pour augmenter la difficulté (v1.2+)
-4. 📚 Révisez les mots difficiles (notez-les)
-5. 🎯 Essayez de reconnaître les caractères sans aucune aide
-6. 🚀 Attendez la v1.3 pour les statistiques détaillées
+4. ✅ Évaluez vos mots pour suivre votre progression (v1.3+)
+5. 📚 Révisez les mots marqués comme "Inconnus"
+6. 🎯 Essayez de reconnaître les caractères sans aucune aide
+7. 🚀 Attendez les prochaines versions pour les statistiques visuelles
 
 ### Pour contribuer au projet
 - Consultez `DEVELOPMENT.md` pour le guide développeur
@@ -282,4 +309,4 @@ rm -rf bin/*
 
 **Bon apprentissage ! 加油！(jiā yóu - courage !)**
 
-*Dernière mise à jour : 21 octobre 2025*
+*Dernière mise à jour : 22 octobre 2025 - Version 1.3.0*

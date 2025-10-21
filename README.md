@@ -4,11 +4,12 @@ Application Garmin Connect IQ pour apprendre le vocabulaire mandarin des niveaux
 
 ## 📱 Fonctionnalités
 
-### Version 1.2 - Implémentée ✅
+### Version 1.3 - Implémentée ✅
+- ✅ **Système de Persistance des Données** : Évaluez et suivez votre progression mot par mot 🆕
 - ✅ **Écran d'accueil avec menu** : Choisissez votre type de quiz
 - ✅ **Quiz Normal (Hanzi → Français)** : Voir un caractère chinois et trouver sa traduction
 - ✅ **Quiz Inversé (Français → Hanzi)** : Voir un mot français et trouver le bon caractère chinois
-- ✅ **Afficher/Cacher le Pinyin** : Bouton MENU pour basculer l'affichage du pinyin pendant le quiz (état conservé) 🆕
+- ✅ **Afficher/Cacher le Pinyin** : Clic sur la zone du pinyin pour basculer l'affichage (état conservé)
 - ✅ **Quiz à choix multiples** : 4 options de réponse par question
 - ✅ **Vocabulaire complet HSK 1 & 2** : ~300 mots avec caractères chinois, pinyin et traductions françaises
 - ✅ **Affichage des hanzi** : Les polices système de Garmin affichent correctement les caractères chinois sur Fenix 8
@@ -19,8 +20,8 @@ Application Garmin Connect IQ pour apprendre le vocabulaire mandarin des niveaux
 - ✅ **Anti-répétition** : Évite de proposer les mêmes mots trop rapidement
 
 ### Fonctionnalités Futures (v2.0+)
-- 🔜 Statistiques détaillées de progression
-- 🔜 Mode révision des mots difficiles
+- 🔜 Affichage des statistiques de progression dans le menu
+- 🔜 Mode révision des mots par statut de maîtrise (inconnus, connus, maîtrisés)
 - 🔜 Exemples de phrases en contexte
 - 🔜 Filtrage par niveau HSK (1 ou 2)
 - 🔜 Système de répétition espacée (SRS)
@@ -39,14 +40,53 @@ Au lancement, vous verrez un écran d'accueil avec 2 options :
 ### Contrôles du Quiz
 - **Bouton UP (Haut)** : Option précédente
 - **Bouton DOWN (Bas)** : Option suivante
-- **Bouton SELECT/START** : Valider la réponse sélectionnée
-- **Clic sur la zone du pinyin (haut de l'écran)** : Afficher/Cacher le pinyin 🆕
+- **Bouton SELECT/START** : Valider la réponse sélectionnée (ou passer à l'évaluation)
+- **Clic sur la zone du pinyin (haut de l'écran)** : Afficher/Cacher le pinyin
 - **Clic tactile sur une option** : Sélectionner et valider directement cette option
 - **Bouton BACK** : Retourner au menu de sélection
 
 ### Comment jouer
 
-#### Option Pinyin (v1.2+) 🆕
+#### Workflow Complet (v1.3+) 🆕
+Le quiz suit maintenant un workflow en 3 étapes :
+
+**1. Question**
+- Un mot s'affiche (hanzi ou français selon le mode)
+- Choisissez parmi 4 options de réponse
+- Le pinyin peut être caché/affiché en cliquant en haut de l'écran
+
+**2. Feedback** 
+- Fond **vert** ✓ : Bonne réponse !
+- Fond **rouge** ✗ : Mauvaise réponse (la correction s'affiche)
+- Message **"Appuyez pour évaluer"** apparaît
+
+**3. Évaluation du Mot** 🆕
+Après le feedback, un écran d'évaluation apparaît :
+```
+┌─────────────────────────┐
+│ Niveau de maîtrise ?    │
+│       你好               │
+├─────────────────────────┤
+│   ✓ Maîtrisé            │ (vert)
+│   ○ Connu               │ (orange)
+│   ✗ Inconnu             │ (rouge)
+└─────────────────────────┘
+```
+
+**Évaluez votre niveau** :
+- **✓ Maîtrisé** (vert) : Vous connaissez parfaitement ce mot
+- **○ Connu** (orange) : Vous reconnaissez le mot mais n'êtes pas totalement sûr
+- **✗ Inconnu** (rouge) : Ce mot vous est complètement inconnu
+
+**Navigation** :
+- Boutons UP/DOWN pour choisir
+- SELECT pour valider
+- Ou clic direct sur une option
+
+Votre évaluation est **immédiatement sauvegardée** et **persiste entre les sessions** ! 
+Vous pouvez réévaluer un mot à chaque nouvelle rencontre.
+
+#### Option Pinyin (v1.2+)
 À tout moment pendant le quiz, vous pouvez **cliquer sur la zone du pinyin** (en haut de l'écran) pour :
 - **Cacher le pinyin** : Si vous voulez un défi plus difficile
 - **Afficher le pinyin** : Si vous avez besoin d'aide pour la prononciation
@@ -80,12 +120,13 @@ Quand le pinyin est caché, l'indicateur `[Tap: Pinyin]` s'affiche pour vous rap
 Language/
 ├── source/
 │   ├── LanguageApp.mc          # Point d'entrée de l'application
-│   ├── MenuView.mc             # Écran d'accueil avec choix du mode ⭐ NEW
-│   ├── MenuDelegate.mc         # Gestion du menu d'accueil ⭐ NEW
+│   ├── MenuView.mc             # Écran d'accueil avec choix du mode
+│   ├── MenuDelegate.mc         # Gestion du menu d'accueil
 │   ├── LanguageView.mc         # Interface graphique du quiz
 │   ├── LanguageDelegate.mc     # Gestion des interactions utilisateur
 │   ├── QuizModel.mc            # Logique du quiz (questions, réponses, score)
 │   ├── VocabularyData.mc       # Base de données des 300 mots HSK
+│   ├── WordProgressStorage.mc  # Persistance des évaluations ⭐ NEW
 │   └── LanguageMenuDelegate.mc # Gestion du menu
 ├── resources/
 │   ├── strings/strings.xml     # Textes de l'interface

@@ -8,9 +8,128 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [Non publié]
 
 ### À venir
-- Mode révision des mots difficiles
-- Statistiques détaillées de progression
 - Filtrage par niveau HSK
+- Affichage des statistiques de progression dans le menu
+- Mode révision des mots par statut de maîtrise
+
+## [1.3.0] - 2025-10-21
+
+### ✨ Ajouté
+- **Système de Persistance des Données** 🎉
+  - Nouveau fichier `WordProgressStorage.mc` : Gestion du stockage persistant avec Storage API
+  - Les utilisateurs peuvent maintenant évaluer leur niveau de maîtrise pour chaque mot
+  - 3 niveaux de maîtrise disponibles :
+    - ✓ **Maîtrisé** (vert) : Mot parfaitement connu
+    - ○ **Connu** (orange) : Mot reconnu mais pas sûr
+    - ✗ **Inconnu** (rouge) : Mot totalement inconnu
+  - Les évaluations sont sauvegardées entre les sessions de l'application
+  - Nouvel écran de flaggage après chaque question
+
+- **Workflow d'Évaluation**
+  1. L'utilisateur répond à une question (correcte ou incorrecte)
+  2. Le feedback s'affiche avec le message "Appuyez pour évaluer"
+  3. Un nouvel écran de flaggage apparaît avec 3 options
+  4. L'utilisateur sélectionne son niveau de maîtrise
+  5. Le statut est immédiatement sauvegardé
+  6. La question suivante s'affiche
+
+- **Navigation dans le Flaggage**
+  - Boutons UP/DOWN pour naviguer entre les 3 options
+  - SELECT pour valider la sélection
+  - Support tactile : clic direct sur une option pour validation instantanée
+  - Couleurs visuelles distinctes (vert/orange/rouge) pour chaque niveau
+
+### Modifié
+- **VocabularyData**
+  - Nouvelles méthodes : `setWordStatus()`, `getWordStatus()`, `getProgressStatistics()`
+  - Intégration avec `WordProgressStorage` pour la persistance
+
+- **QuizModel**
+  - Nouvelles méthodes : `setCurrentWordStatus()`, `getCurrentWordStatus()`, `getCurrentWordIndex()`
+  - Permet d'enregistrer et récupérer le statut du mot actuel
+
+- **LanguageView**
+  - Nouvel état de feedback : `FEEDBACK_FLAGGING` pour l'écran d'évaluation
+  - Nouvelle variable : `selectedFlag` pour la navigation dans les options de flaggage
+  - Nouvelles méthodes :
+    - `drawFlaggingScreen()` : Affiche l'écran d'évaluation
+    - `drawFlagOption()` : Dessine une option de flaggage
+    - `moveToFlagging()` : Transition du feedback vers le flaggage
+    - `submitFlag()` : Enregistre le statut et passe à la question suivante
+  - `drawFeedback()` modifié pour afficher "Appuyez pour évaluer"
+  - `selectPreviousOption()` et `selectNextOption()` gèrent maintenant aussi le flaggage
+  - `handleTapAt()` gère les clics tactiles sur les options de flaggage
+  - `submitAnswer()` passe maintenant au flaggage au lieu de la question suivante
+
+### Architecture Technique
+- **Nouveau fichier** :
+  - `source/WordProgressStorage.mc` : ~160 lignes
+  - Utilise le Storage API de Garmin (`Application.Storage`)
+  - Format de stockage : Dictionary<String, Number> (index → statut)
+  - Clé de stockage : `"word_progress"`
+  - Persistant entre les fermetures d'application et redémarrages
+
+- **Méthodes de WordProgressStorage** :
+  - `setWordStatus(index, status)` : Enregistre le statut d'un mot
+  - `getWordStatus(index)` : Récupère le statut (défaut = UNKNOWN)
+  - `hasStatus(index)` : Vérifie si un mot a été évalué
+  - `getStatistics()` : Retourne le nombre de mots par statut
+  - `getEvaluatedWordsCount()` : Nombre de mots évalués
+  - `getMasteredPercentage()` : Pourcentage de mots maîtrisés
+  - `resetAllProgress()` : Efface toutes les données
+
+### Stockage et Performance
+- **Taille des données** : ~2-3 KB pour 300 mots (très léger)
+- **Limite Garmin** : 100-1000 KB disponibles selon appareil
+- **Opérations** : Lecture/écriture instantanée, pas de limite
+- **Format JSON équivalent** :
+  ```json
+  {
+    "word_progress": {
+      "0": 0,    // Maîtrisé
+      "1": 1,    // Connu
+      "5": 2     // Inconnu
+    }
+  }
+  ```
+
+### Cas d'Usage Futurs
+- Filtrer les questions par niveau de maîtrise
+- Générer des quiz personnalisés (uniquement mots inconnus)
+- Afficher des statistiques détaillées de progression
+- Prioriser les mots non maîtrisés dans la génération aléatoire
+
+### Documentation
+- `DEVELOPMENT.md` entièrement mis à jour avec :
+  - Nouvelle section "Persistance des Données" complète
+  - Documentation de `WordProgressStorage`
+  - Flux de persistance détaillé
+  - Exemples de code et debugging
+  - Cas d'usage avancés
+- Checklist de tests étendue avec 10 nouveaux points de vérification
+
+### Comportement
+```
+Workflow complet :
+1. Quiz → Réponse → Feedback (vert/rouge)
+2. "Appuyez pour évaluer" s'affiche
+3. [Appui sur SELECT ou clic écran]
+4. Écran de flaggage avec 3 options :
+   ┌─────────────────────────┐
+   │ Niveau de maîtrise ?    │
+   │       你好               │
+   ├─────────────────────────┤
+   │   ✓ Maîtrisé        ◄   │ (vert)
+   │   ○ Connu               │ (orange)
+   │   ✗ Inconnu             │ (rouge)
+   └─────────────────────────┘
+5. Sélection et validation
+6. Statut enregistré → Question suivante
+```
+
+### Permissions
+- Permission `PersistedContent` déjà présente dans `manifest.xml`
+- Pas de permission supplémentaire requise
 
 ## [1.2.0] - 2025-10-21
 

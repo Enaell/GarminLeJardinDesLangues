@@ -25,7 +25,28 @@ Ce document liste les idées d'améliorations et fonctionnalités supplémentair
 - ✅ Indicateur visuel `[Tap: Pinyin]`
 - ✅ Fonctionne dans les 2 modes
 
-## 🎯 Version 1.3 - Prochaines Améliorations
+## ✅ Version 1.3 - RÉALISÉ (22 oct 2025)
+
+### Système de Persistance des Données ✅
+**Statut** : IMPLÉMENTÉ  
+**Description** :
+- ✅ Évaluation optionnelle des mots après chaque question
+- ✅ 3 niveaux de maîtrise (Maîtrisé / Connu / Inconnu)
+- ✅ Sauvegarde persistante via Storage API
+- ✅ Interface élégante avec bordure
+- ✅ Navigation tactile et boutons
+- ✅ Les données survivent entre les sessions
+
+## 🎯 Version 1.4 - Prochaines Améliorations
+
+### Affichage des Statistiques de Progression
+**Priorité** : Haute  
+**Complexité** : Faible  
+**Description** :
+- Écran de statistiques accessible depuis le menu
+- Afficher le nombre de mots par statut (Maîtrisés/Connus/Inconnus)
+- Pourcentage de progression globale
+- Graphiques simples si possible
 
 ### Statistiques de Session
 **Priorité** : Haute  
@@ -49,17 +70,7 @@ Ce document liste les idées d'améliorations et fonctionnalités supplémentair
 
 ---
 
-## 📊 Version 1.4 - Persistance des Données
-
-### Sauvegarde du Score
-**Priorité** : Haute  
-**Complexité** : Moyenne  
-**Description** :
-- Utiliser `Application.Storage` pour sauvegarder :
-  - Score total (toutes sessions)
-  - Nombre de questions total
-  - Date de dernière utilisation
-- Afficher statistiques globales au démarrage
+## 📊 Version 1.5 - Historique et Suivi
 
 ### Historique des Sessions
 **Priorité** : Moyenne  
@@ -85,14 +96,14 @@ Ce document liste les idées d'améliorations et fonctionnalités supplémentair
 
 ## 🎓 Version 2.0 - Apprentissage Avancé
 
-### Mode Révision des Mots Difficiles
+### Mode Révision par Statut
 **Priorité** : Haute  
-**Complexité** : Haute  
+**Complexité** : Moyenne  
 **Description** :
-- Tracker les mots ratés (avec compteur d'erreurs)
-- Mode "Révision" qui propose uniquement ces mots
-- Système de graduation : mot "maîtrisé" après 3 bonnes réponses consécutives
-- Liste des mots difficiles avec statistiques
+- Mode "Révision Inconnus" : uniquement les mots marqués comme inconnus
+- Mode "Révision Connus" : renforcer les mots connus
+- Mode "Révision Mixte" : mélange intelligent selon les statuts
+- Priorité automatique aux mots moins maîtrisés
 
 ### Filtrage par Niveau HSK
 **Priorité** : Haute  
@@ -340,15 +351,17 @@ Ce document liste les idées d'améliorations et fonctionnalités supplémentair
 
 ## 🎯 Priorisation Globale
 
-### ✅ Réalisé (v1.1-1.2)
+### ✅ Réalisé (v1.1-1.3)
 1. ✅ Menu de démarrage (v1.1)
 2. ✅ Mode inversé (v1.1)
 3. ✅ Option pinyin masquable (v1.2)
+4. ✅ Système de persistance optionnel (v1.3)
 
-### Must Have (v1.3-1.4)
-1. Statistiques de session
-2. Sauvegarde du score
-3. Paramètres de base
+### Must Have (v1.4-2.0)
+1. Affichage statistiques de progression
+2. Mode révision par statut
+3. Filtrage par niveau HSK
+4. Statistiques de session
 
 ### Should Have (v2.0)
 1. Mode révision mots difficiles
