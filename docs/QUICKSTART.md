@@ -189,13 +189,14 @@
    │ Dictionnaire        │
    │ 300/300 mots        │
    ├─────────────────────┤
-   │ ✓ 你好     bonjour ◄│
-   │ ○ 谢谢     merci    │
+   │ ✓ 你好     bonjour  │ ← Cliquez pour détails
+   │ ○ 谢谢     merci    │ ← Swipe pour scroll
    │ ✗ 对不起   pardon   │
    │ ✓ 请       s'il...  │
    └─────────────────────┘
    ```
    - UP/DOWN : Naviguer dans la liste (scroll automatique)
+   - Swipe UP/DOWN : Scroll rapide (4 mots à la fois)
    - Icônes : ✓ Maîtrisé / ○ Connu / ✗ Inconnu
 
 3. **Filtrer par statut**
@@ -207,7 +208,8 @@
    - Le compteur s'adapte (ex: "Maîtrisés (42)")
 
 4. **Voir les détails d'un mot**
-   - SELECT ou clic sur un mot
+   - Clic sur un mot : ouvre directement les détails
+   - Ou SELECT après avoir navigué sur un mot
    - Affichage complet : hanzi, pinyin, traduction, HSK, statut
 
 5. **Modifier le statut**

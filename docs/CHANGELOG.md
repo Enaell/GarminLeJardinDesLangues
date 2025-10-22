@@ -52,6 +52,9 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
     2. Quiz Inversé (Français → 汉字)
     3. Dictionnaire (📖)
   - Support complet des boutons physiques et de l'écran tactile
+  - **Correction importante** : `DictionaryDelegate` utilise `InputDelegate` au lieu de `BehaviorDelegate` pour meilleure compatibilité tactile
+  - Clic direct sur un mot ouvre immédiatement ses détails
+  - Swipe rapide : 4 mots à la fois (une page complète)
   - Bouton BACK pour retour en arrière à tous les niveaux
 
 ### Architecture Technique
@@ -126,7 +129,8 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 #### Dans le Dictionnaire
 - **UP/DOWN** : Naviguer dans la liste (scroll automatique)
-- **SELECT** ou **TAP** : Ouvrir le détail du mot sélectionné
+- **Swipe UP/DOWN** : Scroll rapide (4 mots à la fois - une page complète)
+- **Clic sur un mot** : Ouvrir ses détails directement
 - **MENU** : Changer le filtre (Tous → Maîtrisés → Connus → Inconnus → Tous)
 - **BACK** : Retour au menu principal
 

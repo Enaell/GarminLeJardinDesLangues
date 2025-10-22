@@ -340,10 +340,61 @@ class DictionaryView extends WatchUi.View {
     }
     
     /**
+     * Ouvre les détails d'un mot spécifique par son index dans filteredIndices
+     */
+    function openWordDetailAt(index as Number) as Void {
+        if (index < 0 || index >= filteredIndices.size()) {
+            return;
+        }
+        
+        var wordIndex = filteredIndices[index];
+        var view = new WordDetailView(wordIndex);
+        WatchUi.pushView(view, new WordDetailDelegate(view), WatchUi.SLIDE_LEFT);
+    }
+    
+    /**
      * Retourne au menu
      */
     function goBack() as Boolean {
         return false; // Laisser le comportement par défaut (pop la view)
+    }
+    
+    /**
+     * Gère un clic/tap à une position Y donnée
+     * Retourne l'index du mot cliqué dans filteredIndices, ou -1 si clic en dehors
+     */
+    function handleTapAt(y as Number) as Number {
+        if (filteredIndices.size() == 0) {
+            return -1;
+        }
+        
+        // Obtenir la hauteur de l'écran via le système
+        var deviceSettings = System.getDeviceSettings();
+        var screenHeight = deviceSettings.screenHeight;
+        
+        // Utiliser les MÊMES calculs que dans onUpdate()
+        var itemHeight = ((screenHeight * 0.63) / visibleItems).toNumber();
+        var startY = (screenHeight * 0.25).toNumber();
+        var endY = startY + (itemHeight * visibleItems);
+        
+        // Vérifier si le clic est dans la zone de la liste
+        if (y < startY || y >= endY) {
+            return -1; // Clic en dehors de la liste
+        }
+        
+        // Calculer quelle ligne a été cliquée (0, 1, 2, 3)
+        var relativeY = y - startY;
+        var clickedLine = relativeY / itemHeight;
+        
+        // Calculer l'index du mot dans la liste filtrée
+        var wordIndex = scrollOffset + clickedLine;
+        
+        // Vérifier que l'index est valide et qu'il y a un mot à cette position
+        if (wordIndex >= 0 && wordIndex < filteredIndices.size()) {
+            return wordIndex;
+        }
+        
+        return -1;
     }
 
     function onHide() as Void {

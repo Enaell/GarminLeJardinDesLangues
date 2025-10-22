@@ -52,7 +52,8 @@ Au lancement, vous verrez un écran d'accueil avec 3 options :
 
 ### Contrôles du Dictionnaire 🆕
 - **Bouton UP/DOWN** : Naviguer dans la liste (scroll automatique)
-- **Bouton SELECT** ou **Clic tactile** : Ouvrir les détails du mot sélectionné
+- **Swipe UP/DOWN** : Scroll rapide (4 mots à la fois)
+- **Clic sur un mot** : Ouvrir ses détails directement
 - **Bouton MENU** : Changer le filtre (Tous → Maîtrisés → Connus → Inconnus → Tous)
 - **Bouton BACK** : Retourner au menu principal
 
@@ -122,20 +123,20 @@ Le dictionnaire vous permet de parcourir et gérer tous les mots du vocabulaire.
 │ Dictionnaire            │
 │ 300/300 mots            │
 ├─────────────────────────┤
-│ ✓ 你好     bonjour  ◄   │
-│ ○ 谢谢     merci        │
+│ ✓ 你好     bonjour     │ ← Cliquez pour détails
+│ ○ 谢谢     merci        │ ← Swipe pour scroll rapide
 │ ✗ 对不起   pardon       │
 │ ✓ 请       s'il vous... │
 └─────────────────────────┘
 ```
-- Naviguez avec UP/DOWN (scroll automatique)
+- Naviguez avec UP/DOWN ou swipe up/down (4 mots par swipe)
+- Cliquez sur un mot pour ouvrir immédiatement ses détails
 - Appuyez sur MENU pour filtrer :
   - **Tous** : Affiche les 300 mots
   - **Maîtrisés** : Uniquement les mots marqués ✓
   - **Connus** : Uniquement les mots marqués ○
   - **Inconnus** : Uniquement les mots marqués ✗
 - Le compteur s'adapte au filtre (ex: "Maîtrisés (42)")
-- Cliquez ou appuyez SELECT sur un mot pour voir ses détails
 
 **2. Détail d'un Mot**
 ```

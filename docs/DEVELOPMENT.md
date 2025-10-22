@@ -105,10 +105,12 @@ private var filteredIndices       // Liste des indices de mots correspondant au 
 - `cycleFilter()` : Change le filtre (Tous → Maîtrisés → Connus → Inconnus → Tous)
 - `updateFilteredIndices()` : Met à jour la liste des mots selon le filtre actif
 - `openWordDetail()` : Ouvre la vue détaillée du mot sélectionné
+- `handleTapAt(y)` : Détecte et sélectionne le mot cliqué (zone 25%-88%)
 - `getStatusIcon/Color()` : Rendu visuel des statuts (✓/○/✗ + couleurs)
 
 **DictionaryDelegate - Interactions** :
-- `onTap(clickEvent)` : Ouvre les détails du mot sélectionné
+- `onTap(clickEvent)` : Clic sur un mot pour ouvrir ses détails directement
+- `onSwipe()` : Swipe up/down pour scroll rapide dans la liste (4 mots à la fois - une page complète)
 - `onKey()` : Gère UP/DOWN/SELECT
 - `onPreviousPage/NextPage()` : Navigation dans la liste
 - `onSelect()` : Ouvre les détails
@@ -413,7 +415,7 @@ Incorrect: Graphics.COLOR_DK_RED
 ### 4. LanguageDelegate.mc
 **Rôle** : Gestion des interactions utilisateur dans le quiz
 
-**Héritage** : `WatchUi.InputDelegate` (au lieu de BehaviorDelegate pour supporter le tactile)
+**Héritage** : `WatchUi.InputDelegate` (pour supporter les événements tactiles)
 
 **Mapping des interactions** :
 ```monkeyc
@@ -881,6 +883,9 @@ class MyClass extends WatchUi.View {
 **Dictionnaire** :
 - [ ] La liste des mots s'affiche correctement (v1.4+)
 - [ ] Navigation UP/DOWN fonctionne avec scroll (v1.4+)
+- [ ] Swipe up/down pour scroll rapide (v1.4+)
+- [ ] Clic sur un mot le sélectionne (v1.4+)
+- [ ] Clic sur le mot déjà sélectionné ouvre les détails (v1.4+)
 - [ ] L'indicateur de scroll apparaît quand nécessaire (v1.4+)
 - [ ] Les icônes de statut (✓/○/✗) s'affichent correctement (v1.4+)
 - [ ] Les couleurs des statuts sont correctes (vert/orange/rouge) (v1.4+)
