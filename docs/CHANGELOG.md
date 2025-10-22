@@ -10,7 +10,164 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### À venir
 - Filtrage par niveau HSK
 - Affichage des statistiques de progression dans le menu
-- Mode révision des mots par statut de maîtrise
+
+## [1.4.0] - 2025-10-22
+
+### ✨ Ajouté
+- **📖 Dictionnaire Complet** 🎉
+  - Nouveau mode "Dictionnaire" accessible depuis le menu principal
+  - Parcourez tous les 300 mots du vocabulaire dans une liste scrollable
+  - Affichage compact : hanzi, traduction, et icône de statut (✓/○/✗)
+  - Navigation fluide avec indicateur de scroll visuel
+
+- **🎨 Filtrage par Statut**
+  - 4 modes de filtrage : Tous, Maîtrisés, Connus, Inconnus
+  - Bouton MENU pour cycler entre les filtres
+  - Compteur dynamique selon le filtre (ex: "Maîtrisés (42)", "15/300 mots")
+  - Mise à jour instantanée de la liste
+
+- **🔍 Vue Détaillée des Mots**
+  - Nouvel écran de détail complet pour chaque mot :
+    - Hanzi en grand format
+    - Pinyin (prononciation)
+    - Traduction complète
+    - Niveau HSK
+    - Statut actuel avec icône colorée
+  - Numéro du mot dans la base de données (ex: "Mot #42")
+
+- **✏️ Modification des Statuts**
+  - Possibilité de modifier le statut de n'importe quel mot depuis le dictionnaire
+  - Mode édition dédié avec 3 options colorées :
+    - ✓ Maîtrisé (vert)
+    - ○ Connu (orange)
+    - ✗ Inconnu (rouge)
+  - Navigation UP/DOWN entre les options
+  - Validation ou annulation des modifications
+  - Sauvegarde instantanée dans WordProgressStorage
+  - Les changements sont immédiatement visibles dans le dictionnaire
+
+- **🎯 Navigation Améliorée**
+  - Menu principal avec 3 options :
+    1. Quiz Normal (汉字 → Français)
+    2. Quiz Inversé (Français → 汉字)
+    3. Dictionnaire (📖)
+  - Support complet des boutons physiques et de l'écran tactile
+  - Bouton BACK pour retour en arrière à tous les niveaux
+
+### Architecture Technique
+- **Nouveaux fichiers** :
+  - `source/DictionaryView.mc` : Vue liste du dictionnaire (~350 lignes)
+  - `source/DictionaryDelegate.mc` : Gestion des interactions (~70 lignes)
+  - `source/WordDetailView.mc` : Vue détaillée d'un mot (~320 lignes)
+  - `source/WordDetailDelegate.mc` : Gestion des interactions détail (~90 lignes)
+
+### Modifié
+- **MenuView**
+  - Ajout de la 3ème option "Dictionnaire"
+  - Nouvel enum `MenuOption` : `QUIZ_NORMAL`, `QUIZ_REVERSE`, `DICTIONARY`
+  - Méthode `launchQuiz()` renommée en `launchSelectedMode()`
+  - Zones tactiles ajustées pour 3 options (42%-54%, 56%-68%, 70%-82%)
+  - Navigation UP/DOWN gère maintenant 3 options (0-2)
+
+- **MenuDelegate**
+  - Appelle `launchSelectedMode()` au lieu de `launchQuiz()`
+  - Détecte l'option "Dictionnaire" et lance la vue appropriée
+
+### Fonctionnalités du Dictionnaire
+
+#### Liste des Mots
+```
+┌─────────────────────────┐
+│ Dictionnaire            │
+│ 300/300 mots            │
+├─────────────────────────┤
+│ ✓ 你好     bonjour  ◄   │
+│ ○ 谢谢     merci        │
+│ ✗ 对不起   pardon       │
+│ ✓ 请       s'il vous... │
+├─────────────────────────┤
+│ ↑↓ • SELECT • BACK      │
+└─────────────────────────┘
+```
+
+#### Détail d'un Mot
+```
+┌─────────────────────────┐
+│ Mot #1                  │
+│                         │
+│         你好            │
+│        nǐ hǎo           │
+├─────────────────────────┤
+│        Bonjour          │
+│        HSK 1            │
+├─────────────────────────┤
+│ Statut:                 │
+│ ✓ Maîtrisé              │
+├─────────────────────────┤
+│ SELECT modifier • BACK  │
+└─────────────────────────┘
+```
+
+#### Édition du Statut
+```
+┌─────────────────────────┐
+│ Modifier le statut      │
+│         你好            │
+├─────────────────────────┤
+│   ✓ Maîtrisé        ◄   │
+│   ○ Connu               │
+│   ✗ Inconnu             │
+├─────────────────────────┤
+│ ↑↓ • SELECT • BACK      │
+└─────────────────────────┘
+```
+
+### Interactions Utilisateur
+
+#### Dans le Dictionnaire
+- **UP/DOWN** : Naviguer dans la liste (scroll automatique)
+- **SELECT** ou **TAP** : Ouvrir le détail du mot sélectionné
+- **MENU** : Changer le filtre (Tous → Maîtrisés → Connus → Inconnus → Tous)
+- **BACK** : Retour au menu principal
+
+#### Dans le Détail d'un Mot
+- **SELECT** ou **TAP sur la zone "Statut"** : Activer le mode édition
+- **BACK** : Retour au dictionnaire
+
+#### En Mode Édition
+- **UP/DOWN** : Naviguer entre les 3 options de statut
+- **SELECT** : Sauvegarder le statut sélectionné
+- **TAP sur une option** : Sélectionner et sauvegarder immédiatement cette option
+- **BACK** : Annuler et retour au mode détail
+
+### Cas d'Usage
+1. **Révision avant quiz** : Parcourir tous les mots avec leurs traductions
+2. **Auto-évaluation** : Marquer les mots connus/inconnus avant de commencer
+3. **Suivi de progression** : Voir combien de mots sont maîtrisés (filtre)
+4. **Correction de statut** : Changer un mot marqué par erreur
+5. **Découverte** : Parcourir le vocabulaire HSK 1 & 2 complet
+
+### Performance
+- **Mémoire** : Utilisation minimale grâce au filtrage dynamique
+- **Scroll** : Fluide avec seulement 4 éléments visibles simultanément
+- **Sauvegarde** : Instantanée via WordProgressStorage existant
+- **Pas de lag** : Génération à la volée des listes filtrées
+
+### Documentation
+- `DEVELOPMENT.md` entièrement mis à jour avec :
+  - Nouvelle section complète pour `DictionaryView` et `DictionaryDelegate`
+  - Nouvelle section complète pour `WordDetailView` et `WordDetailDelegate`
+  - Diagramme de flux mis à jour avec le mode dictionnaire
+  - Description détaillée des 4 modes de filtrage
+  - Workflow complet de modification des statuts
+  - 28 nouveaux points dans la checklist de tests (Menu, Dictionnaire, Détails)
+
+### Roadmap Mise à Jour
+Cette version complète la **v1.4.0** prévue avec :
+- ✅ Mode dictionnaire avec liste complète
+- ✅ Filtrage par statut de maîtrise
+- ✅ Modification des statuts depuis le dictionnaire
+- ⏳ Statistiques détaillées (reporté à v1.5.0)
 
 ## [1.3.0] - 2025-10-21
 

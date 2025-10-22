@@ -26,7 +26,7 @@ class MenuDelegate extends WatchUi.InputDelegate {
         
         // Si une option a été touchée, la lancer directement
         if (handled) {
-            view.launchQuiz();
+            view.launchSelectedMode();
             return true;
         }
         
@@ -46,7 +46,7 @@ class MenuDelegate extends WatchUi.InputDelegate {
             view.selectNextOption();
             return true;
         } else if (key == WatchUi.KEY_ENTER) {
-            view.launchQuiz();
+            view.launchSelectedMode();
             return true;
         }
         
@@ -70,10 +70,10 @@ class MenuDelegate extends WatchUi.InputDelegate {
     }
 
     /**
-     * Gestion du bouton SELECT/START - Lancer le quiz sélectionné
+     * Gestion du bouton SELECT/START - Lancer le mode sélectionné
      */
     function onSelect() as Boolean {
-        view.launchQuiz();
+        view.launchSelectedMode();
         return true;
     }
 

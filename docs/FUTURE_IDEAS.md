@@ -37,15 +37,33 @@ Ce document liste les idées d'améliorations et fonctionnalités supplémentair
 - ✅ Navigation tactile et boutons
 - ✅ Les données survivent entre les sessions
 
-## 🎯 Version 1.4 - Prochaines Améliorations
+## ✅ Version 1.4 - RÉALISÉ (22 oct 2025)
+
+### Dictionnaire Complet ✅
+**Statut** : IMPLÉMENTÉ  
+**Description** :
+- ✅ Mode "Dictionnaire" accessible depuis le menu
+- ✅ Liste scrollable de tous les 300 mots
+- ✅ Affichage : hanzi, traduction, icône de statut
+- ✅ Filtrage par statut (Tous/Maîtrisés/Connus/Inconnus)
+- ✅ Vue détaillée de chaque mot (hanzi, pinyin, traduction, HSK, statut)
+- ✅ Modification des statuts directement depuis le dictionnaire
+- ✅ Clic direct sur les options de statut pour validation rapide
+- ✅ Clic uniquement sur zone "Statut" pour entrer en mode édition
+- ✅ Navigation tactile et boutons
+- ✅ Indicateur de scroll visuel
+- ✅ Compteur dynamique selon le filtre
+
+## 🎯 Version 1.5 - Prochaines Améliorations
 
 ### Affichage des Statistiques de Progression
 **Priorité** : Haute  
 **Complexité** : Faible  
 **Description** :
-- Écran de statistiques accessible depuis le menu
+- Écran de statistiques accessible depuis le menu (4ème option)
 - Afficher le nombre de mots par statut (Maîtrisés/Connus/Inconnus)
 - Pourcentage de progression globale
+- Pourcentage par niveau HSK (1 et 2 séparément)
 - Graphiques simples si possible
 
 ### Statistiques de Session
@@ -104,6 +122,7 @@ Ce document liste les idées d'améliorations et fonctionnalités supplémentair
 - Mode "Révision Connus" : renforcer les mots connus
 - Mode "Révision Mixte" : mélange intelligent selon les statuts
 - Priorité automatique aux mots moins maîtrisés
+- **Note** : Le dictionnaire (v1.4) permet déjà de consulter les mots par statut, il manque juste la génération de quiz ciblés
 
 ### Filtrage par Niveau HSK
 **Priorité** : Haute  
@@ -351,17 +370,19 @@ Ce document liste les idées d'améliorations et fonctionnalités supplémentair
 
 ## 🎯 Priorisation Globale
 
-### ✅ Réalisé (v1.1-1.3)
+### ✅ Réalisé (v1.1-1.4)
 1. ✅ Menu de démarrage (v1.1)
 2. ✅ Mode inversé (v1.1)
 3. ✅ Option pinyin masquable (v1.2)
 4. ✅ Système de persistance optionnel (v1.3)
+5. ✅ Dictionnaire complet avec filtrage (v1.4)
+6. ✅ Modification des statuts depuis dictionnaire (v1.4)
 
-### Must Have (v1.4-2.0)
+### Must Have (v1.5-2.0)
 1. Affichage statistiques de progression
-2. Mode révision par statut
-3. Filtrage par niveau HSK
-4. Statistiques de session
+2. Mode révision par statut (utiliser le filtre dictionnaire pour quiz)
+3. Statistiques de session
+4. Filtrage par niveau HSK
 
 ### Should Have (v2.0)
 1. Mode révision mots difficiles

@@ -9,15 +9,16 @@ Bienvenue dans la documentation du projet **Le Jardin des Langues** - Applicatio
 ### Je veux utiliser l'application
 👉 **[QUICKSTART.md](QUICKSTART.md)** - Guide de démarrage rapide (5 min)
 - Installation sur montre ou simulateur
-- Première utilisation avec le menu
-- Contrôles et astuces pour les 2 modes de quiz
+- Première utilisation avec le menu (3 modes)
+- Contrôles pour les 2 modes de quiz
+- Comment utiliser le dictionnaire (v1.4+)
 - Comment cacher/afficher le pinyin (v1.2+)
 - Comment évaluer les mots (v1.3+)
 
 ### Je veux comprendre le projet
 👉 **[../README.md](../README.md)** - Présentation générale (racine du projet)
 - Description de l'application
-- Fonctionnalités actuelles (menu + 2 modes + pinyin masquable + évaluation optionnelle)
+- Fonctionnalités actuelles (2 quiz + dictionnaire + évaluation + pinyin masquable)
 - Architecture technique
 - Contenu pédagogique (vocabulaire HSK)
 
@@ -35,6 +36,7 @@ Bienvenue dans la documentation du projet **Le Jardin des Langues** - Applicatio
 
 ### Historique des versions
 👉 **[CHANGELOG.md](CHANGELOG.md)** - Historique des versions
+- Notes de la version 1.4.0 (dictionnaire complet avec filtrage)
 - Notes de la version 1.3.0 (système de persistance optionnel)
 - Notes de la version 1.2.0 (option pinyin masquable)
 - Notes de la version 1.1.0 (menu + mode inversé)
@@ -65,13 +67,17 @@ Language/
 │
 ├── 📁 source/                ← Code source
 │   ├── LanguageApp.mc          (Point d'entrée)
-│   ├── MenuView.mc             (Écran d'accueil avec menu)
+│   ├── MenuView.mc             (Écran d'accueil - 3 modes)
 │   ├── MenuDelegate.mc         (Interactions du menu)
 │   ├── LanguageView.mc         (Interface du quiz)
 │   ├── LanguageDelegate.mc     (Interactions du quiz)
 │   ├── QuizModel.mc            (Logique du quiz)
 │   ├── VocabularyData.mc       (Base de données HSK)
-│   └── WordProgressStorage.mc  (Persistance des évaluations)
+│   ├── WordProgressStorage.mc  (Persistance des évaluations)
+│   ├── DictionaryView.mc       (Liste des mots - v1.4)
+│   ├── DictionaryDelegate.mc   (Interactions dictionnaire - v1.4)
+│   ├── WordDetailView.mc       (Détail d'un mot - v1.4)
+│   └── WordDetailDelegate.mc   (Interactions détail - v1.4)
 │
 ├── 📁 resources/             ← Ressources
 │   ├── strings/strings.xml     (Textes interface)
@@ -131,15 +137,15 @@ Language/
 
 | Métrique | Valeur |
 |----------|--------|
-| **Version actuelle** | 1.3.0 |
+| **Version actuelle** | 1.4.0 |
 | **Date release** | 22 oct 2025 |
-| **Lignes de code** | ~1,700 |
-| **Lignes documentation** | ~1,000 |
-| **Fichiers source** | 8 |
+| **Lignes de code** | ~2,500 |
+| **Lignes documentation** | ~1,200 |
+| **Fichiers source** | 12 |
 | **Fichiers documentation** | 5 |
 | **Mots HSK** | 300 |
-| **Modes de quiz** | 2 (Normal + Inversé) |
-| **Fonctionnalités** | Pinyin masquable + Évaluation optionnelle |
+| **Modes** | 2 Quiz + Dictionnaire |
+| **Fonctionnalités** | Pinyin masquable + Évaluation + Dictionnaire filtrable |
 | **Appareils compatibles** | 6 modèles Fenix 8 |
 | **Langue interface** | Français |
 | **Langue contenu** | Mandarin |
@@ -217,9 +223,9 @@ A : Actuellement en développement. Compilez depuis le source ou attendez public
 ## 📅 Dernière Mise à Jour
 
 **Date** : 22 octobre 2025  
-**Version** : 1.3.0  
+**Version** : 1.4.0  
 **État** : Stable - Production Ready ✅  
-**Dernière modification** : Système de persistance optionnel pour évaluer les mots
+**Dernière modification** : Dictionnaire complet avec filtrage et modification des statuts
 
 ---
 

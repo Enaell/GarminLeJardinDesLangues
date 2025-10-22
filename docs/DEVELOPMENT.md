@@ -14,8 +14,8 @@
 ### Vue d'Ensemble
 L'application suit le pattern MVC (Model-View-Controller) adapté à Monkey C :
 - **Model** : `QuizModel.mc` + `VocabularyData.mc` + `WordProgressStorage.mc`
-- **View** : `MenuView.mc` + `LanguageView.mc`
-- **Controller** : `MenuDelegate.mc` + `LanguageDelegate.mc`
+- **View** : `MenuView.mc` + `LanguageView.mc` + `DictionaryView.mc` + `WordDetailView.mc`
+- **Controller** : `MenuDelegate.mc` + `LanguageDelegate.mc` + `DictionaryDelegate.mc` + `WordDetailDelegate.mc`
 
 ### Diagramme de Flux
 ```
@@ -25,52 +25,161 @@ LanguageApp (entry point)
     │       ↓
     │   MenuDelegate (interactions menu)
     │       ↓
-    │   [Sélection mode quiz]
+    │   [Sélection mode]
     │       ↓
-    ├─→ LanguageView (affichage quiz)
-    │       ↓
-    │   QuizModel (logique + mode)
-    │       ↓
-    │   VocabularyData (données)
-    │       ↓
-    │   WordProgressStorage (persistance)
-    │
-    └─→ LanguageDelegate (interactions quiz)
-            ↓
-        LanguageView (mise à jour)
-            ↓
-        [Feedback → Flaggage]
-            ↓
-        WordProgressStorage (sauvegarde statut)
+    │   ├─→ Quiz Normal/Inversé
+    │   │       ↓
+    │   │   LanguageView (affichage quiz)
+    │   │       ↓
+    │   │   QuizModel (logique + mode)
+    │   │       ↓
+    │   │   VocabularyData (données)
+    │   │       ↓
+    │   │   WordProgressStorage (persistance)
+    │   │       ↓
+    │   │   LanguageDelegate (interactions quiz)
+    │   │       ↓
+    │   │   [Feedback → Flaggage]
+    │   │
+    │   └─→ Dictionnaire
+    │           ↓
+    │       DictionaryView (liste des mots)
+    │           ↓
+    │       DictionaryDelegate (interactions)
+    │           ↓
+    │       [Sélection d'un mot]
+    │           ↓
+    │       WordDetailView (détails + édition statut)
+    │           ↓
+    │       WordDetailDelegate (interactions)
+    │           ↓
+    │       VocabularyData + WordProgressStorage (sauvegarde)
 ```
 
 ## 🔧 Composants Principaux
 
-### 0. MenuView.mc & MenuDelegate.mc (v1.1+)
-**Rôle** : Écran d'accueil pour choisir le mode de quiz
+### 0. MenuView.mc & MenuDelegate.mc (v1.1+, v1.4+)
+**Rôle** : Écran d'accueil pour choisir le mode de quiz ou accéder au dictionnaire
 
 **MenuView - Structure** :
 ```monkeyc
-private var selectedOption    // 0 = Normal, 1 = Inversé
+private var selectedOption    // 0 = Normal, 1 = Inversé, 2 = Dictionnaire
 private var screenHeight      // Pour calcul zones tactiles
-enum QuizMode {
-    NORMAL = 0,
-    REVERSE = 1
+enum MenuOption {
+    QUIZ_NORMAL = 0,
+    QUIZ_REVERSE = 1,
+    DICTIONARY = 2
 }
 ```
 
 **Méthodes principales** :
-- `onUpdate(dc)` : Dessine le menu avec 2 options
+- `onUpdate(dc)` : Dessine le menu avec 3 options (v1.4+)
 - `drawMenuOption()` : Dessine une option (titre + description)
-- `selectPreviousOption/NextOption()` : Navigation UP/DOWN
-- `handleTapAt(y)` : Gère les clics tactiles
-- `launchQuiz()` : Lance le quiz avec le mode sélectionné
+- `selectPreviousOption/NextOption()` : Navigation UP/DOWN (3 options, v1.4+)
+- `handleTapAt(y)` : Gère les clics tactiles (3 zones, v1.4+)
+- `launchSelectedMode()` : Lance le quiz ou le dictionnaire selon l'option sélectionnée (v1.4+)
 
 **MenuDelegate - Interactions** :
 - `onTap(clickEvent)` : Capture les clics tactiles
 - `onKey()` : Gère UP/DOWN/SELECT
-- `onSelect()` : Lance le quiz
+- `onSelect()` : Lance le mode sélectionné
 - `onBack()` : Quitte l'application (comportement par défaut)
+
+### 0bis. DictionaryView.mc & DictionaryDelegate.mc (v1.4+)
+**Rôle** : Affiche la liste complète des mots avec filtrage par statut
+
+**DictionaryView - Structure** :
+```monkeyc
+private var scrollOffset          // Index du premier mot visible
+private var selectedIndex         // Index du mot sélectionné dans la liste filtrée
+private var visibleItems          // Nombre de mots affichés simultanément (4)
+private var filterStatus          // Filtre actuel (null = tous, 0/1/2 = Maîtrisé/Connu/Inconnu)
+private var filteredIndices       // Liste des indices de mots correspondant au filtre
+```
+
+**Méthodes principales** :
+- `onUpdate(dc)` : Dessine la liste des mots avec statuts
+- `drawWordItem()` : Dessine une ligne de la liste (hanzi, traduction, icône de statut)
+- `drawScrollIndicator()` : Affiche l'indicateur de scroll si nécessaire
+- `selectPreviousWord/NextWord()` : Navigation dans la liste avec scroll automatique
+- `cycleFilter()` : Change le filtre (Tous → Maîtrisés → Connus → Inconnus → Tous)
+- `updateFilteredIndices()` : Met à jour la liste des mots selon le filtre actif
+- `openWordDetail()` : Ouvre la vue détaillée du mot sélectionné
+- `getStatusIcon/Color()` : Rendu visuel des statuts (✓/○/✗ + couleurs)
+
+**DictionaryDelegate - Interactions** :
+- `onTap(clickEvent)` : Ouvre les détails du mot sélectionné
+- `onKey()` : Gère UP/DOWN/SELECT
+- `onPreviousPage/NextPage()` : Navigation dans la liste
+- `onSelect()` : Ouvre les détails
+- `onMenu()` : Change le filtre (cycle entre les 4 modes)
+- `onBack()` : Retour au menu principal
+
+**Fonctionnalités** :
+- Affichage de tous les mots (300 par défaut)
+- Filtrage par statut : Maîtrisés, Connus, Inconnus, ou Tous
+- Scroll automatique avec indicateur visuel
+- Affichage du compteur (ex: "15/300 mots", "Maîtrisés (42)")
+- Navigation rapide avec les boutons physiques ou l'écran tactile
+
+### 0ter. WordDetailView.mc & WordDetailDelegate.mc (v1.4+)
+**Rôle** : Affiche les détails complets d'un mot et permet de modifier son statut
+
+**WordDetailView - Structure** :
+```monkeyc
+private var wordIndex              // Index du mot affiché
+private var currentStatus          // Statut actuel du mot
+private var editMode               // Mode édition activé (true/false)
+private var selectedStatusOption   // Option sélectionnée en mode édition (0-2)
+```
+
+**Modes d'affichage** :
+1. **Mode Détail** (consultation) :
+   - Affichage grand format du hanzi
+   - Pinyin
+   - Traduction complète
+   - Niveau HSK
+   - Statut actuel avec icône et couleur
+
+2. **Mode Édition** (modification du statut) :
+   - 3 options interactives :
+     - ✓ Maîtrisé (vert)
+     - ○ Connu (orange)
+     - ✗ Inconnu (rouge)
+   - Navigation UP/DOWN
+   - Validation ou annulation
+
+**Méthodes principales** :
+- `onUpdate(dc)` : Dessine le bon mode (détail ou édition)
+- `drawDetailMode(dc)` : Affichage consultation
+- `drawEditMode(dc)` : Affichage édition
+- `drawStatusOption()` : Dessine une option de statut sélectionnable
+- `enterEditMode()` : Active le mode édition
+- `cancelEditMode()` : Annule les modifications
+- `saveStatus()` : Enregistre le nouveau statut et quitte le mode édition
+- `selectPreviousStatusOption/NextStatusOption()` : Navigation entre les 3 options
+- `getStatusText/Icon/Color()` : Rendu visuel des statuts
+
+**WordDetailDelegate - Interactions** :
+- `onTap()` : Mode détail = entre en édition si clic sur zone Statut (72%-90%) / Mode édition = sélectionne et sauvegarde l'option cliquée
+- `onKey()` : Gère UP/DOWN/SELECT selon le mode
+- `onSelect()` : Mode détail = entre en édition / Mode édition = sauvegarde
+- `onBack()` : Mode édition = annule / Mode détail = retour au dictionnaire
+- `onPreviousPage/NextPage()` : Navigation en mode édition uniquement
+
+**Workflow de modification** :
+```
+1. Utilisateur ouvre un mot depuis le dictionnaire
+2. WordDetailView affiche les infos complètes
+3. Utilisateur appuie sur SELECT ou tape sur la zone "Statut" (72%-90% de l'écran)
+4. Mode édition s'active avec 3 options
+5. Utilisateur sélectionne un nouveau statut (UP/DOWN ou clic direct)
+6. Appuie sur SELECT ou tape sur une option pour valider
+7. Le statut est sauvegardé dans WordProgressStorage
+8. Retour au mode détail avec le nouveau statut
+
+Note : Un clic direct sur une option (35%-52%, 52%-69%, 69%-86%) sélectionne et sauvegarde immédiatement.
+```
 
 ### 1. VocabularyData.mc
 **Rôle** : Stockage et accès aux données de vocabulaire
@@ -738,6 +847,8 @@ class MyClass extends WatchUi.View {
 ### Tests Manuels
 
 **Checklist de test** :
+
+**Quiz** :
 - [ ] Les caractères chinois s'affichent correctement
 - [ ] Le pinyin est lisible
 - [ ] Navigation UP/DOWN fonctionne dans le quiz
@@ -746,10 +857,10 @@ class MyClass extends WatchUi.View {
 - [ ] Score s'incrémente correctement
 - [ ] Pas de répétition immédiate des mots
 - [ ] Toutes les 4 options sont différentes
-- [ ] Le bouton BACK quitte l'application
+- [ ] Le bouton BACK retourne au menu (v1.1+)
 - [ ] Le bouton MENU bascule l'affichage du pinyin (v1.2+)
 - [ ] L'état du pinyin est conservé entre les questions (v1.2+)
-- [ ] L'indicateur `[Tap: Pinyin]` s'affiche quand le pinyin est caché (v1.2+)
+- [ ] L'indicateur `[MENU: Pinyin]` s'affiche quand le pinyin est caché (v1.2+)
 - [ ] L'écran de feedback s'affiche correctement (v1.3+)
 - [ ] Le message "Appuyez pour évaluer" apparaît après le feedback (v1.3+)
 - [ ] L'écran de flaggage s'affiche avec 3 options (v1.3+)
@@ -759,6 +870,38 @@ class MyClass extends WatchUi.View {
 - [ ] Les statuts persistent après fermeture/réouverture de l'app (v1.3+)
 - [ ] Les clics tactiles fonctionnent sur les options de flaggage (v1.3+)
 - [ ] Le statut peut être modifié à chaque nouvelle rencontre du mot (v1.3+)
+
+**Menu** :
+- [ ] Le menu affiche 3 options (Quiz Normal, Quiz Inversé, Dictionnaire) (v1.4+)
+- [ ] Navigation UP/DOWN fonctionne dans le menu (v1.4+)
+- [ ] Les clics tactiles fonctionnent sur les 3 options (v1.4+)
+- [ ] SELECT lance le mode sélectionné (v1.4+)
+- [ ] BACK quitte l'application (v1.4+)
+
+**Dictionnaire** :
+- [ ] La liste des mots s'affiche correctement (v1.4+)
+- [ ] Navigation UP/DOWN fonctionne avec scroll (v1.4+)
+- [ ] L'indicateur de scroll apparaît quand nécessaire (v1.4+)
+- [ ] Les icônes de statut (✓/○/✗) s'affichent correctement (v1.4+)
+- [ ] Les couleurs des statuts sont correctes (vert/orange/rouge) (v1.4+)
+- [ ] Le filtre MENU cycle correctement (Tous → Maîtrisés → Connus → Inconnus) (v1.4+)
+- [ ] Le compteur de mots s'affiche correctement selon le filtre (v1.4+)
+- [ ] La sélection d'un mot ouvre les détails (v1.4+)
+- [ ] BACK retourne au menu (v1.4+)
+
+**Détails du mot** :
+- [ ] Toutes les informations s'affichent (hanzi, pinyin, traduction, HSK, statut) (v1.4+)
+- [ ] SELECT active le mode édition (v1.4+)
+- [ ] Tap sur zone "Statut" active le mode édition (v1.4+)
+- [ ] Tap ailleurs en mode détail ne fait rien (v1.4+)
+- [ ] Navigation UP/DOWN fonctionne en mode édition (v1.4+)
+- [ ] Les 3 options de statut s'affichent avec les bonnes couleurs (v1.4+)
+- [ ] SELECT sauvegarde le statut sélectionné (v1.4+)
+- [ ] Tap direct sur une option sélectionne et sauvegarde immédiatement (v1.4+)
+- [ ] BACK annule les modifications en mode édition (v1.4+)
+- [ ] BACK retourne au dictionnaire en mode détail (v1.4+)
+- [ ] Le statut modifié est immédiatement visible dans le dictionnaire (v1.4+)
+- [ ] Le statut modifié persiste après fermeture/réouverture (v1.4+)
 
 ## 📚 Ressources
 

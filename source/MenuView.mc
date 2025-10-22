@@ -11,9 +11,10 @@ class MenuView extends WatchUi.View {
     private var selectedOption as Number;
     private var screenHeight as Number;
     
-    enum QuizMode {
-        NORMAL = 0,    // Hanzi → Français
-        REVERSE = 1    // Français → Hanzi
+    enum MenuOption {
+        QUIZ_NORMAL = 0,   // Quiz Hanzi → Français
+        QUIZ_REVERSE = 1,  // Quiz Français → Hanzi
+        DICTIONARY = 2     // Dictionnaire
     }
 
     function initialize() {
@@ -62,24 +63,28 @@ class MenuView extends WatchUi.View {
         dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             centerX,
-            (height * 0.35).toNumber(),
+            (height * 0.30).toNumber(),
             Graphics.FONT_SYSTEM_XTINY,
-            "Choisissez votre quiz",
+            "Choisissez un mode",
             Graphics.TEXT_JUSTIFY_CENTER
         );
         
         // --- Séparateur ---
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
-        dc.drawLine((width * 0.1).toNumber(), (height * 0.42).toNumber(), 
-                   (width * 0.9).toNumber(), (height * 0.42).toNumber());
+        dc.drawLine((width * 0.1).toNumber(), (height * 0.36).toNumber(), 
+                   (width * 0.9).toNumber(), (height * 0.36).toNumber());
         
         // --- Option 1 : Quiz Normal (Hanzi → Français) ---
-        drawMenuOption(dc, 0, (height * 0.50).toNumber(), width, (height * 0.15).toNumber(),
-                      "汉字 → Français", "");
+        drawMenuOption(dc, 0, (height * 0.42).toNumber(), width, (height * 0.12).toNumber(),
+                      "汉字 → Français", "Quiz");
         
         // --- Option 2 : Quiz Inversé (Français → Hanzi) ---
-        drawMenuOption(dc, 1, (height * 0.68).toNumber(), width, (height * 0.15).toNumber(),
-                      "Français → 汉字", "");
+        drawMenuOption(dc, 1, (height * 0.56).toNumber(), width, (height * 0.12).toNumber(),
+                      "Français → 汉字", "Quiz inversé");
+        
+        // --- Option 3 : Dictionnaire ---
+        drawMenuOption(dc, 2, (height * 0.70).toNumber(), width, (height * 0.12).toNumber(),
+                      "📖 Dictionnaire", "Parcourir les mots");
         
         // --- Instructions en bas ---
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
@@ -87,7 +92,7 @@ class MenuView extends WatchUi.View {
             centerX,
             (height * 0.90).toNumber(),
             Graphics.FONT_SYSTEM_XTINY,
-            "↑↓ pour choisir • SELECT pour lancer",
+            "↑↓ • SELECT",
             Graphics.TEXT_JUSTIFY_CENTER
         );
     }
@@ -140,7 +145,7 @@ class MenuView extends WatchUi.View {
     function selectPreviousOption() as Void {
         selectedOption--;
         if (selectedOption < 0) {
-            selectedOption = 1; // 2 options (0 et 1)
+            selectedOption = 2; // 3 options (0, 1, 2)
         }
         WatchUi.requestUpdate();
     }
@@ -150,7 +155,7 @@ class MenuView extends WatchUi.View {
      */
     function selectNextOption() as Void {
         selectedOption++;
-        if (selectedOption > 1) {
+        if (selectedOption > 2) {
             selectedOption = 0;
         }
         WatchUi.requestUpdate();
@@ -164,13 +169,17 @@ class MenuView extends WatchUi.View {
             return false;
         }
         
-        // Zone option 1 (Quiz Normal) : 50% - 65% de la hauteur
-        var option1Start = (screenHeight * 0.50).toNumber();
-        var option1End = (screenHeight * 0.65).toNumber();
+        // Zone option 1 (Quiz Normal) : 42% - 54% de la hauteur
+        var option1Start = (screenHeight * 0.42).toNumber();
+        var option1End = (screenHeight * 0.54).toNumber();
         
-        // Zone option 2 (Quiz Inversé) : 68% - 83% de la hauteur
-        var option2Start = (screenHeight * 0.68).toNumber();
-        var option2End = (screenHeight * 0.83).toNumber();
+        // Zone option 2 (Quiz Inversé) : 56% - 68% de la hauteur
+        var option2Start = (screenHeight * 0.56).toNumber();
+        var option2End = (screenHeight * 0.68).toNumber();
+        
+        // Zone option 3 (Dictionnaire) : 70% - 82% de la hauteur
+        var option3Start = (screenHeight * 0.70).toNumber();
+        var option3End = (screenHeight * 0.82).toNumber();
         
         if (y >= option1Start && y < option1End) {
             selectedOption = 0;
@@ -180,18 +189,29 @@ class MenuView extends WatchUi.View {
             selectedOption = 1;
             WatchUi.requestUpdate();
             return true;
+        } else if (y >= option3Start && y < option3End) {
+            selectedOption = 2;
+            WatchUi.requestUpdate();
+            return true;
         }
         
         return false;
     }
     
     /**
-     * Lance le quiz avec le mode sélectionné
+     * Lance le mode sélectionné (Quiz ou Dictionnaire)
      */
-    function launchQuiz() as Void {
-        var quizMode = (selectedOption == 0) ? QuizModel.MODE_NORMAL : QuizModel.MODE_REVERSE;
-        var view = new LanguageView(quizMode);
-        WatchUi.switchToView(view, new LanguageDelegate(view), WatchUi.SLIDE_LEFT);
+    function launchSelectedMode() as Void {
+        if (selectedOption == 2) { // DICTIONARY
+            // Lancer le dictionnaire
+            var view = new DictionaryView();
+            WatchUi.switchToView(view, new DictionaryDelegate(view), WatchUi.SLIDE_LEFT);
+        } else {
+            // Lancer le quiz
+            var quizMode = (selectedOption == 0) ? QuizModel.MODE_NORMAL : QuizModel.MODE_REVERSE;
+            var view = new LanguageView(quizMode);
+            WatchUi.switchToView(view, new LanguageDelegate(view), WatchUi.SLIDE_LEFT);
+        }
     }
     
     /**

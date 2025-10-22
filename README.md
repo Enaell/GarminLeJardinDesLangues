@@ -4,9 +4,12 @@ Application Garmin Connect IQ pour apprendre le vocabulaire mandarin des niveaux
 
 ## 📱 Fonctionnalités
 
-### Version 1.3 - Implémentée ✅
-- ✅ **Système de Persistance des Données** : Évaluez et suivez votre progression mot par mot 🆕
-- ✅ **Écran d'accueil avec menu** : Choisissez votre type de quiz
+### Version 1.4 - Implémentée ✅
+- ✅ **📖 Dictionnaire Complet** : Parcourez tous les 300 mots avec filtrage par statut 🆕
+- ✅ **✏️ Modification des Statuts** : Éditez le niveau de maîtrise de chaque mot depuis le dictionnaire 🆕
+- ✅ **🎨 Filtrage Avancé** : Filtrez par Maîtrisés, Connus, Inconnus ou Tous 🆕
+- ✅ **Système de Persistance des Données** : Évaluez et suivez votre progression mot par mot
+- ✅ **Écran d'accueil avec menu** : Choisissez entre quiz ou dictionnaire
 - ✅ **Quiz Normal (Hanzi → Français)** : Voir un caractère chinois et trouver sa traduction
 - ✅ **Quiz Inversé (Français → Hanzi)** : Voir un mot français et trouver le bon caractère chinois
 - ✅ **Afficher/Cacher le Pinyin** : Clic sur la zone du pinyin pour basculer l'affichage (état conservé)
@@ -21,7 +24,7 @@ Application Garmin Connect IQ pour apprendre le vocabulaire mandarin des niveaux
 
 ### Fonctionnalités Futures (v2.0+)
 - 🔜 Affichage des statistiques de progression dans le menu
-- 🔜 Mode révision des mots par statut de maîtrise (inconnus, connus, maîtrisés)
+- 🔜 Mode révision ciblée (quiz uniquement avec mots inconnus ou connus)
 - 🔜 Exemples de phrases en contexte
 - 🔜 Filtrage par niveau HSK (1 ou 2)
 - 🔜 Système de répétition espacée (SRS)
@@ -29,13 +32,15 @@ Application Garmin Connect IQ pour apprendre le vocabulaire mandarin des niveaux
 ## 🎮 Utilisation
 
 ### Menu Principal
-Au lancement, vous verrez un écran d'accueil avec 2 options :
+Au lancement, vous verrez un écran d'accueil avec 3 options :
 1. **Quiz Normal** : 汉字 → Français (voir hanzi, trouver traduction)
 2. **Quiz Inversé** : Français → 汉字 (voir français, trouver hanzi)
+3. **📖 Dictionnaire** : Parcourir tous les mots et gérer leurs statuts 🆕
 
 **Navigation du menu** :
 - **Bouton UP/DOWN** : Choisir une option
-- **Bouton SELECT** ou **Clic tactile** : Lancer le quiz sélectionné
+- **Bouton SELECT** ou **Clic tactile** : Lancer le mode sélectionné
+- **Bouton BACK** : Quitter l'application
 
 ### Contrôles du Quiz
 - **Bouton UP (Haut)** : Option précédente
@@ -44,6 +49,19 @@ Au lancement, vous verrez un écran d'accueil avec 2 options :
 - **Clic sur la zone du pinyin (haut de l'écran)** : Afficher/Cacher le pinyin
 - **Clic tactile sur une option** : Sélectionner et valider directement cette option
 - **Bouton BACK** : Retourner au menu de sélection
+
+### Contrôles du Dictionnaire 🆕
+- **Bouton UP/DOWN** : Naviguer dans la liste (scroll automatique)
+- **Bouton SELECT** ou **Clic tactile** : Ouvrir les détails du mot sélectionné
+- **Bouton MENU** : Changer le filtre (Tous → Maîtrisés → Connus → Inconnus → Tous)
+- **Bouton BACK** : Retourner au menu principal
+
+### Contrôles de la Vue Détail 🆕
+- **Bouton SELECT** ou **Clic sur zone "Statut"** : Activer le mode édition du statut
+- **Bouton UP/DOWN** (en mode édition) : Choisir le nouveau statut
+- **Bouton SELECT** (en mode édition) : Sauvegarder le statut sélectionné
+- **Clic sur une option** (en mode édition) : Sélectionner et sauvegarder immédiatement
+- **Bouton BACK** : Annuler l'édition ou retourner au dictionnaire
 
 ### Comment jouer
 
@@ -94,6 +112,70 @@ Vous pouvez réévaluer un mot à chaque nouvelle rencontre.
 Quand le pinyin est caché, l'indicateur `[Tap: Pinyin]` s'affiche pour vous rappeler comment le réafficher.
 
 **Votre choix est conservé** : Si vous cachez le pinyin, il restera caché pour toutes les questions suivantes jusqu'à ce que vous le réaffichiez.
+
+#### Mode Dictionnaire (v1.4+) 🆕
+Le dictionnaire vous permet de parcourir et gérer tous les mots du vocabulaire.
+
+**1. Liste des Mots**
+```
+┌─────────────────────────┐
+│ Dictionnaire            │
+│ 300/300 mots            │
+├─────────────────────────┤
+│ ✓ 你好     bonjour  ◄   │
+│ ○ 谢谢     merci        │
+│ ✗ 对不起   pardon       │
+│ ✓ 请       s'il vous... │
+└─────────────────────────┘
+```
+- Naviguez avec UP/DOWN (scroll automatique)
+- Appuyez sur MENU pour filtrer :
+  - **Tous** : Affiche les 300 mots
+  - **Maîtrisés** : Uniquement les mots marqués ✓
+  - **Connus** : Uniquement les mots marqués ○
+  - **Inconnus** : Uniquement les mots marqués ✗
+- Le compteur s'adapte au filtre (ex: "Maîtrisés (42)")
+- Cliquez ou appuyez SELECT sur un mot pour voir ses détails
+
+**2. Détail d'un Mot**
+```
+┌─────────────────────────┐
+│ Mot #1                  │
+│         你好            │
+│        nǐ hǎo           │
+├─────────────────────────┤
+│        Bonjour          │
+│        HSK 1            │
+├─────────────────────────┤
+│ Statut: ✓ Maîtrisé     │ ← Cliquez ici
+└─────────────────────────┘
+```
+- Affichage complet : hanzi, pinyin, traduction, HSK, statut
+- Appuyez sur SELECT ou cliquez sur la zone "Statut" pour modifier
+- BACK pour retourner à la liste
+
+**3. Modification du Statut**
+```
+┌─────────────────────────┐
+│ Modifier le statut      │
+│         你好            │
+├─────────────────────────┤
+│   ✓ Maîtrisé        ◄   │ ← Cliquez directement
+│   ○ Connu               │ ← ou ici
+│   ✗ Inconnu             │ ← ou là
+└─────────────────────────┘
+```
+- UP/DOWN pour naviguer + SELECT pour valider
+- Ou clic direct sur une option pour sélection instantanée
+- BACK pour annuler
+- Le changement est immédiat et persistant
+
+**Cas d'Usage du Dictionnaire** :
+- 📖 **Révision** : Parcourir tous les mots avant un quiz
+- ✏️ **Auto-évaluation** : Marquer les mots que vous connaissez déjà
+- 📊 **Suivi** : Voir combien de mots sont maîtrisés (filtre)
+- 🔄 **Correction** : Modifier un statut marqué par erreur
+- 🎯 **Ciblage** : Filtrer uniquement les mots inconnus pour révision
 
 #### Quiz Normal (Hanzi → Français)
 1. Lancez l'application sur votre Fenix 8

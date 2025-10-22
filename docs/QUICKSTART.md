@@ -48,9 +48,10 @@
 ### Écran d'Accueil - Menu
 
 1. **Lancez l'application**
-   - Un menu d'accueil s'affiche avec 2 options :
+   - Un menu d'accueil s'affiche avec 3 options :
      - **Quiz 汉字 → Français** (Quiz Normal)
      - **Quiz Français → 汉字** (Quiz Inversé)
+     - **📖 Dictionnaire** (Parcourir tous les mots)
 
 2. **Choisissez votre mode**
    ```
@@ -58,20 +59,26 @@
    │  Le Jardin des      │
    │    Langues          │
    │                     │
-   │ Choisissez quiz     │
+   │  Choisissez mode    │
    ├─────────────────────┤
-   │ Quiz 汉字→Français ◄│  ← Sélectionné
+   │ 汉字 → Français  ◄  │  ← Sélectionné
+   │ Quiz                │
    │                     │
-   │ Quiz Français→汉字  │
+   │ Français → 汉字     │
+   │ Quiz inversé        │
+   │                     │
+   │ 📖 Dictionnaire     │
+   │ Parcourir mots      │
    ├─────────────────────┤
-   │ ↑↓ • SELECT lancer  │
+   │ ↑↓ • SELECT         │
    └─────────────────────┘
    ```
 
 3. **Navigation du menu**
-   - Bouton UP/DOWN : Changer de mode
-   - SELECT : Lancer le quiz sélectionné
+   - Bouton UP/DOWN : Changer de mode (3 options)
+   - SELECT : Lancer le mode sélectionné
    - Clic tactile : Cliquer directement sur un mode pour le lancer
+   - BACK : Quitter l'application
 
 ### Démarrer un Quiz
 
@@ -169,7 +176,52 @@
 
 8. **Changez de mode**
    - Appuyez sur le bouton **BACK** pour retourner au menu
-   - Choisissez l'autre mode de quiz
+   - Choisissez un autre mode (quiz ou dictionnaire)
+
+### Utiliser le Dictionnaire (v1.4+) 🆕
+
+1. **Accédez au dictionnaire**
+   - Depuis le menu principal, sélectionnez "📖 Dictionnaire"
+   
+2. **Parcourez la liste**
+   ```
+   ┌─────────────────────┐
+   │ Dictionnaire        │
+   │ 300/300 mots        │
+   ├─────────────────────┤
+   │ ✓ 你好     bonjour ◄│
+   │ ○ 谢谢     merci    │
+   │ ✗ 对不起   pardon   │
+   │ ✓ 请       s'il...  │
+   └─────────────────────┘
+   ```
+   - UP/DOWN : Naviguer dans la liste (scroll automatique)
+   - Icônes : ✓ Maîtrisé / ○ Connu / ✗ Inconnu
+
+3. **Filtrer par statut**
+   - Appuyez sur **MENU** pour cycler entre les filtres :
+     - **Tous** : 300 mots
+     - **Maîtrisés** : Uniquement les ✓
+     - **Connus** : Uniquement les ○
+     - **Inconnus** : Uniquement les ✗
+   - Le compteur s'adapte (ex: "Maîtrisés (42)")
+
+4. **Voir les détails d'un mot**
+   - SELECT ou clic sur un mot
+   - Affichage complet : hanzi, pinyin, traduction, HSK, statut
+
+5. **Modifier le statut**
+   - Depuis la vue détail, cliquez sur la zone "Statut" en bas
+   - Ou appuyez sur SELECT
+   - Choisissez le nouveau statut :
+     - UP/DOWN pour naviguer
+     - SELECT pour valider
+     - Ou clic direct sur une option
+   - BACK pour annuler
+
+6. **Retour**
+   - BACK : Retour au dictionnaire
+   - BACK (depuis dictionnaire) : Retour au menu
 
 ### Quitter
 
@@ -203,6 +255,13 @@
      - ✗ **Inconnu** : Mot totalement inconnu
    - Les évaluations sont sauvegardées entre les sessions
    - Ou passez directement au mot suivant (évaluation optionnelle)
+
+5. **Mode Dictionnaire (v1.4+)** 🆕
+   - Parcourez tous les 300 mots HSK 1 & 2
+   - Filtrez par statut (Maîtrisés/Connus/Inconnus)
+   - Consultez les détails complets de chaque mot
+   - Modifiez les statuts directement depuis le dictionnaire
+   - Parfait pour révision ou auto-évaluation avant quiz
 
 ### 🎯 Objectifs Quotidiens
 
@@ -247,12 +306,12 @@
 
 | Touche/Action | Résultat |
 |--------|--------|
-| ⬆️ | Option précédente |
-| ⬇️ | Option suivante |
-| M | Afficher/Cacher le pinyin (MENU) 🆕 |
-| ↩️ | Valider la réponse sélectionnée |
-| 🖱️ Clic | Sélectionner + valider directement l'option cliquée |
-| Esc | Quitter |
+| ⬆️ | Option précédente / Naviguer dans liste |
+| ⬇️ | Option suivante / Naviguer dans liste |
+| M | Afficher/Cacher le pinyin (MENU) / Filtrer dictionnaire 🆕 |
+| ↩️ | Valider / Ouvrir détails |
+| 🖱️ Clic | Sélectionner + valider / Ouvrir détails |
+| Esc | Retour / Quitter |
 | F5 | Relancer le simulateur |
 | Ctrl+Shift+B | Compiler |
 
@@ -289,9 +348,10 @@ rm -rf bin/*
 2. ✅ Testez le mode inversé pour renforcer la mémorisation
 3. ✅ Cachez le pinyin pour augmenter la difficulté (v1.2+)
 4. ✅ Évaluez vos mots pour suivre votre progression (v1.3+)
-5. 📚 Révisez les mots marqués comme "Inconnus"
-6. 🎯 Essayez de reconnaître les caractères sans aucune aide
-7. 🚀 Attendez les prochaines versions pour les statistiques visuelles
+5. ✅ Utilisez le dictionnaire pour réviser tous les mots (v1.4+)
+6. 📚 Filtrez les mots "Inconnus" dans le dictionnaire et révisez-les
+7. 🎯 Marquez les mots comme "Maîtrisés" au fur et à mesure
+8. 🚀 Visez 100% de mots maîtrisés !
 
 ### Pour contribuer au projet
 - Consultez `DEVELOPMENT.md` pour le guide développeur
@@ -309,4 +369,4 @@ rm -rf bin/*
 
 **Bon apprentissage ! 加油！(jiā yóu - courage !)**
 
-*Dernière mise à jour : 22 octobre 2025 - Version 1.3.0*
+*Dernière mise à jour : 22 octobre 2025 - Version 1.4.0*
