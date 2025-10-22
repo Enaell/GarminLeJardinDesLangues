@@ -4,7 +4,7 @@ Application Garmin Connect IQ pour apprendre le vocabulaire mandarin des niveaux
 
 ## 📱 Fonctionnalités
 
-### Version 1.4 - Implémentée ✅
+### Version 1.4.1 - Implémentée ✅
 - ✅ **📖 Dictionnaire Complet** : Parcourez tous les 300 mots avec filtrage par statut 🆕
 - ✅ **✏️ Modification des Statuts** : Éditez le niveau de maîtrise de chaque mot depuis le dictionnaire 🆕
 - ✅ **🎨 Filtrage Avancé** : Filtrez par Maîtrisés, Connus, Inconnus ou Tous 🆕
@@ -14,7 +14,7 @@ Application Garmin Connect IQ pour apprendre le vocabulaire mandarin des niveaux
 - ✅ **Quiz Inversé (Français → Hanzi)** : Voir un mot français et trouver le bon caractère chinois
 - ✅ **Afficher/Cacher le Pinyin** : Clic sur la zone du pinyin pour basculer l'affichage (état conservé)
 - ✅ **Quiz à choix multiples** : 4 options de réponse par question
-- ✅ **Vocabulaire complet HSK 1 & 2** : ~300 mots avec caractères chinois, pinyin et traductions françaises
+- ✅ **Vocabulaire complet HSK 1, 2 & 3** : 600 mots avec caractères chinois, pinyin et traductions françaises 🆕
 - ✅ **Affichage des hanzi** : Les polices système de Garmin affichent correctement les caractères chinois sur Fenix 8
 - ✅ **Feedback visuel immédiat** : Fond vert pour bonne réponse, rouge pour mauvaise réponse
 - ✅ **Affichage du pinyin** : Aide à la prononciation sous les caractères chinois
@@ -121,7 +121,7 @@ Le dictionnaire vous permet de parcourir et gérer tous les mots du vocabulaire.
 ```
 ┌─────────────────────────┐
 │ Dictionnaire            │
-│ 300/300 mots            │
+│ 600/600 mots            │
 ├─────────────────────────┤
 │ ✓ 你好     bonjour     │ ← Cliquez pour détails
 │ ○ 谢谢     merci        │ ← Swipe pour scroll rapide
@@ -132,7 +132,7 @@ Le dictionnaire vous permet de parcourir et gérer tous les mots du vocabulaire.
 - Naviguez avec UP/DOWN ou swipe up/down (4 mots par swipe)
 - Cliquez sur un mot pour ouvrir immédiatement ses détails
 - Appuyez sur MENU pour filtrer :
-  - **Tous** : Affiche les 300 mots
+  - **Tous** : Affiche les 600 mots
   - **Maîtrisés** : Uniquement les mots marqués ✓
   - **Connus** : Uniquement les mots marqués ○
   - **Inconnus** : Uniquement les mots marqués ✗
@@ -172,7 +172,7 @@ Le dictionnaire vous permet de parcourir et gérer tous les mots du vocabulaire.
 - Le changement est immédiat et persistant
 
 **Cas d'Usage du Dictionnaire** :
-- 📖 **Révision** : Parcourir tous les mots avant un quiz
+- 📖 **Révision** : Parcourir tous les 600 mots avant un quiz
 - ✏️ **Auto-évaluation** : Marquer les mots que vous connaissez déjà
 - 📊 **Suivi** : Voir combien de mots sont maîtrisés (filtre)
 - 🔄 **Correction** : Modifier un statut marqué par erreur
@@ -225,7 +225,7 @@ Language/
 - **Langage** : Monkey C (Connect IQ SDK)
 - **Plateforme cible** : Garmin Fenix 8 47mm (et compatibles)
 - **Version SDK minimale** : 5.2.0
-- **Taille du vocabulaire** : 300 mots (150 HSK 1 + 150 HSK 2)
+- **Taille du vocabulaire** : 600 mots (150 HSK 1 + 150 HSK 2 + 300 HSK 3)
 
 ## 📚 Contenu Pédagogique
 
@@ -242,6 +242,13 @@ Extension du vocabulaire pour conversations quotidiennes :
 - Verbes d'action supplémentaires
 - Vocabulaire lié aux activités (sport, loisirs)
 - Expressions de temps et de lieu
+
+### Vocabulaire HSK 3 (300 mots) 🆕
+Vocabulaire intermédiaire pour communication plus élaborée :
+- Particules grammaticales avancées (把, 被, 才, etc.)
+- Vocabulaire du quotidien (超市, 地铁, 冰箱, etc.)
+- Expressions de temps et lieux (附近, 终于, 突然, etc.)
+- Adjectifs et verbes courants (聪明, 容易, 决定, 准备, etc.)
 
 ## ️ Développement
 
@@ -273,7 +280,7 @@ monkeydo bin/Language.prg fenix847mm
 ## 🎯 Logique du Quiz
 
 ### Génération des Questions
-1. **Sélection aléatoire** : Un mot est choisi parmi les 300 disponibles
+1. **Sélection aléatoire** : Un mot est choisi parmi les 600 disponibles
 2. **Anti-répétition** : Les 20 derniers mots sont mémorisés et évités
 3. **Génération des distracteurs** : 3 traductions incorrectes sont choisies aléatoirement
 4. **Mélange** : Les 4 options sont mélangées aléatoirement

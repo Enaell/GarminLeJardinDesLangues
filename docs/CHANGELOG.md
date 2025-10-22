@@ -11,6 +11,32 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Filtrage par niveau HSK
 - Affichage des statistiques de progression dans le menu
 
+## [1.4.1] - 2025-10-22
+
+### ✨ Ajouté
+- **📚 Vocabulaire HSK 3 Complet** 🎉
+  - 300 mots supplémentaires du niveau HSK 3
+  - Total : 600 mots (HSK 1: 150, HSK 2: 150, HSK 3: 300)
+  - Vocabulaire intermédiaire avec particules grammaticales, expressions courantes
+  - Exemples : 聪明 (intelligent), 环境 (environnement), 如果 (si), 虽然 (bien que)
+
+### Modifié
+- **VocabularyData.mc**
+  - Taille du tableau passée de 300 à 600 mots
+  - `getVocabularySize()` retourne maintenant 600
+  - Vocabulaire enrichi pour apprentissage niveau intermédiaire
+
+### Impact Utilisateur
+- **Plus de contenu** : Double le vocabulaire disponible pour l'apprentissage
+- **Progression naturelle** : Après HSK 1-2, continuez avec HSK 3
+- **Compatibilité totale** : Fonctionne avec tous les modes existants (quiz, dictionnaire, filtrage)
+- **Pas de changement d'interface** : L'utilisateur voit simplement plus de mots disponibles
+
+### Performance
+- **Mémoire** : Impact minimal (~+3 KB pour 300 mots supplémentaires)
+- **Vitesse** : Pas de dégradation, génération aléatoire reste identique
+- **Stockage** : Les évaluations de mots persistent toujours correctement
+
 ## [1.4.0] - 2025-10-22
 
 ### ✨ Ajouté

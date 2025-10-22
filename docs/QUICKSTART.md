@@ -187,7 +187,7 @@
    ```
    ┌─────────────────────┐
    │ Dictionnaire        │
-   │ 300/300 mots        │
+   │ 600/600 mots        │
    ├─────────────────────┤
    │ ✓ 你好     bonjour  │ ← Cliquez pour détails
    │ ○ 谢谢     merci    │ ← Swipe pour scroll
@@ -259,7 +259,7 @@
    - Ou passez directement au mot suivant (évaluation optionnelle)
 
 5. **Mode Dictionnaire (v1.4+)** 🆕
-   - Parcourez tous les 300 mots HSK 1 & 2
+   - Parcourez tous les 600 mots HSK 1, 2 & 3
    - Filtrez par statut (Maîtrisés/Connus/Inconnus)
    - Consultez les détails complets de chaque mot
    - Modifiez les statuts directement depuis le dictionnaire
@@ -343,6 +343,10 @@ rm -rf bin/*
 - **Thèmes** : Couleurs, activités, émotions, descriptions
 - **Exemples** : 漂亮 (beau), 游泳 (nager), 因为 (parce que)
 
+### HSK 3 (300 mots) 🆕
+- **Thèmes** : Vocabulaire intermédiaire, particules grammaticales, expressions courantes
+- **Exemples** : 聪明 (intelligent), 环境 (environnement), 如果 (si)
+
 ## Prochaines Étapes
 
 ### Après avoir maîtrisé les bases
@@ -371,4 +375,4 @@ rm -rf bin/*
 
 **Bon apprentissage ! 加油！(jiā yóu - courage !)**
 
-*Dernière mise à jour : 22 octobre 2025 - Version 1.4.0*
+*Dernière mise à jour : 22 octobre 2025 - Version 1.4.1*

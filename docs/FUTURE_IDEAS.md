@@ -305,15 +305,22 @@ Ce document liste les idées d'améliorations et fonctionnalités supplémentair
 
 ## 🗂️ Contenu Supplémentaire
 
-### Vocabulaire HSK 3-6
+### ✅ Vocabulaire HSK 3 - RÉALISÉ (v1.4.1)
+**Statut** : IMPLÉMENTÉ  
+**Description** :
+- ✅ HSK 3 : +300 mots (total 600)
+- ✅ Vocabulaire intermédiaire complet
+- ✅ Compatible avec tous les modes existants
+
+### Vocabulaire HSK 4-6
 **Priorité** : Haute  
 **Complexité** : Moyenne (ajout de données)  
 **Description** :
-- HSK 3 : +300 mots (total 600)
 - HSK 4 : +600 mots (total 1200)
 - HSK 5 : +1300 mots (total 2500)
 - HSK 6 : +2500 mots (total 5000)
 - Attention : limite mémoire montre !
+- Nécessitera peut-être filtrage par défaut ou chargement dynamique
 
 ### Autres Langues Asiatiques
 **Priorité** : Moyenne  
@@ -370,13 +377,14 @@ Ce document liste les idées d'améliorations et fonctionnalités supplémentair
 
 ## 🎯 Priorisation Globale
 
-### ✅ Réalisé (v1.1-1.4)
+### ✅ Réalisé (v1.1-1.4.1)
 1. ✅ Menu de démarrage (v1.1)
 2. ✅ Mode inversé (v1.1)
 3. ✅ Option pinyin masquable (v1.2)
 4. ✅ Système de persistance optionnel (v1.3)
 5. ✅ Dictionnaire complet avec filtrage (v1.4)
 6. ✅ Modification des statuts depuis dictionnaire (v1.4)
+7. ✅ Vocabulaire HSK 3 complet (v1.4.1) - 300 mots supplémentaires
 
 ### Must Have (v1.5-2.0)
 1. Affichage statistiques de progression

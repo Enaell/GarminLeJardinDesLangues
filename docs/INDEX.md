@@ -72,7 +72,7 @@ Language/
 │   ├── LanguageView.mc         (Interface du quiz)
 │   ├── LanguageDelegate.mc     (Interactions du quiz)
 │   ├── QuizModel.mc            (Logique du quiz)
-│   ├── VocabularyData.mc       (Base de données HSK)
+│   ├── VocabularyData.mc       (Base de données HSK 1-3: 600 mots)
 │   ├── WordProgressStorage.mc  (Persistance des évaluations)
 │   ├── DictionaryView.mc       (Liste des mots - v1.4)
 │   ├── DictionaryDelegate.mc   (Interactions dictionnaire - v1.4)
@@ -118,9 +118,10 @@ Language/
 ```
 1. Ouvrir source/VocabularyData.mc
 2. Ajouter dans le tableau vocabulary :
-   ["新词", "xīn cí", "nouveau mot", 2]
+   ["新词", "xīn cí", "nouveau mot", 4]  # HSK 4
 3. Compiler et tester
 4. Mettre à jour README.md (nombre de mots)
+Note: HSK 1-3 déjà complets (600 mots)
 ```
 
 ### Scénario 4 : Je veux proposer une amélioration
@@ -137,13 +138,13 @@ Language/
 
 | Métrique | Valeur |
 |----------|--------|
-| **Version actuelle** | 1.4.0 |
+| **Version actuelle** | 1.4.1 |
 | **Date release** | 22 oct 2025 |
 | **Lignes de code** | ~2,500 |
 | **Lignes documentation** | ~1,200 |
 | **Fichiers source** | 12 |
 | **Fichiers documentation** | 5 |
-| **Mots HSK** | 300 |
+| **Mots HSK** | 600 (HSK 1-3) |
 | **Modes** | 2 Quiz + Dictionnaire |
 | **Fonctionnalités** | Pinyin masquable + Évaluation + Dictionnaire filtrable |
 | **Appareils compatibles** | 6 modèles Fenix 8 |
@@ -183,7 +184,7 @@ A : Commencez par README.md, puis QUICKSTART.md pour l'installation.
 A : Lisez DEVELOPMENT.md, puis proposez vos modifications via GitHub (si projet public).
 
 **Q : Où sont les données de vocabulaire ?**  
-A : Dans `source/VocabularyData.mc`, tableau `vocabulary` (ligne ~15).
+A : Dans `source/VocabularyData.mc`, tableau `vocabulary` (ligne ~15). Contient 600 mots HSK 1-3.
 
 **Q : Comment ajouter de nouveaux mots ?**  
 A : Ajoutez une ligne dans VocabularyData.mc au format : `["hanzi", "pinyin", "traduction", niveau]`
@@ -223,9 +224,9 @@ A : Actuellement en développement. Compilez depuis le source ou attendez public
 ## 📅 Dernière Mise à Jour
 
 **Date** : 22 octobre 2025  
-**Version** : 1.4.0  
+**Version** : 1.4.1  
 **État** : Stable - Production Ready ✅  
-**Dernière modification** : Dictionnaire complet avec filtrage et modification des statuts
+**Dernière modification** : Ajout du vocabulaire HSK 3 (300 mots supplémentaires)
 
 ---
 

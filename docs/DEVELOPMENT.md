@@ -192,8 +192,14 @@ Note : Un clic direct sur une option (35%-52%, 52%-69%, 69%-86%) sélectionne et
 // Exemple: ["你好", "nǐ hǎo", "bonjour", 1]
 ```
 
+**Contenu** :
+- HSK 1 : 150 mots
+- HSK 2 : 150 mots
+- HSK 3 : 300 mots
+- **Total : 600 mots**
+
 **Méthodes clés** :
-- `getVocabularySize()` : Retourne le nombre total de mots (300)
+- `getVocabularySize()` : Retourne le nombre total de mots (600)
 - `getWordByIndex(index)` : Récupère un mot complet
 - `getHanzi(index)` : Récupère uniquement le hanzi
 - `getPinyin(index)` : Récupère uniquement le pinyin
@@ -740,11 +746,13 @@ var optionStartY = (height * 40) / 100;
 ```
 
 ### Ajouter des Niveaux HSK Supplémentaires
-Dans `VocabularyData.mc` :
+✅ **HSK 3 déjà ajouté !** (300 mots)
+
+Pour ajouter HSK 4-6, dans `VocabularyData.mc` :
 ```monkeyc
-// Ajouter des mots HSK 3
-["因为", "yīnwèi", "parce que", 3],
-["所以", "suǒyǐ", "donc", 3],
+// Ajouter des mots HSK 4
+["虽然", "suīrán", "bien que", 4],
+["然而", "rán'ér", "cependant", 4],
 // etc.
 ```
 
