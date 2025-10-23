@@ -357,7 +357,17 @@ rm -rf bin/*
 5. ✅ Utilisez le dictionnaire pour réviser tous les mots (v1.4+)
 6. 📚 Filtrez les mots "Inconnus" dans le dictionnaire et révisez-les
 7. 🎯 Marquez les mots comme "Maîtrisés" au fur et à mesure
-8. 🚀 Visez 100% de mots maîtrisés !
+8. 🚀 L'algorithme introduit progressivement 15 mots HSK 1 (v1.5+)
+9. 🧠 Continuez à pratiquer : l'app priorise les mots "Inconnus" (90% du temps)
+10. 📈 Visez 100% de mots maîtrisés par niveau HSK !
+
+### Fonctionnement de l'Apprentissage Progressif (v1.5+)
+L'application utilise maintenant un algorithme intelligent qui :
+- **Introduit 15 nouveaux mots** de niveau HSK 1 au début
+- **Vous fait pratiquer ces 15 mots** avant d'en introduire de nouveaux
+- **Priorise les mots difficiles** : 90% du temps sur les mots "Inconnus"
+- **Respecte la progression HSK** : HSK 1 → HSK 2 → HSK 3
+- **Évite les répétitions** : Les 5 derniers mots ne seront pas reproposés immédiatement
 
 ### Pour contribuer au projet
 - Consultez `DEVELOPMENT.md` pour le guide développeur
@@ -375,4 +385,4 @@ rm -rf bin/*
 
 **Bon apprentissage ! 加油！(jiā yóu - courage !)**
 
-*Dernière mise à jour : 22 octobre 2025 - Version 1.4.1*
+*Dernière mise à jour : 23 octobre 2025 - Version 1.5.0*

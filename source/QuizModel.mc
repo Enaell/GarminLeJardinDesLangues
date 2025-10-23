@@ -16,6 +16,10 @@ class QuizModel {
     // Variable statique pour conserver l'état du pinyin entre les sessions
     static private var showPinyin as Boolean = true;
     
+    // Constantes pour l'algorithme d'apprentissage progressif
+    private const MAX_LEARNING_POOL = 15;  // Taille du pool d'apprentissage
+    private const HISTORY_SIZE = 5;         // Nombre de mots à éviter en répétition
+    
     private var currentWordIndex as Number;
     private var options as Array<String>;
     private var correctAnswerPosition as Number;
@@ -40,19 +44,17 @@ class QuizModel {
     
     /**
      * Génère une nouvelle question
-     * Sélectionne un mot aléatoire et crée 4 options de réponse
+     * Sélectionne un mot selon l'algorithme d'apprentissage progressif et crée 4 options de réponse
      */
     function generateNewQuestion() as Void {
-        var vocabSize = VocabularyData.getVocabularySize();
-        
-        // Sélectionner un mot aléatoire (éviter les répétitions récentes)
-        currentWordIndex = getRandomWordIndex(vocabSize);
+        // Sélectionner un mot selon l'algorithme d'apprentissage
+        currentWordIndex = selectNextWord();
         
         // Mettre à jour l'historique des mots utilisés
         usedIndices.add(currentWordIndex);
-        if (usedIndices.size() > 20) {
-            // Garder seulement les 20 derniers pour éviter les répétitions à court terme
-            usedIndices = usedIndices.slice(usedIndices.size() - 20, usedIndices.size());
+        if (usedIndices.size() > HISTORY_SIZE) {
+            // Garder seulement les 5 derniers pour éviter les répétitions à court terme
+            usedIndices = usedIndices.slice(usedIndices.size() - HISTORY_SIZE, usedIndices.size());
         }
         
         // Générer les options de réponse
@@ -60,19 +62,181 @@ class QuizModel {
     }
     
     /**
-     * Génère un index aléatoire qui n'a pas été utilisé récemment
+     * Sélectionne le prochain mot selon l'algorithme d'apprentissage progressif
+     * Logique :
+     * 1. Si moins de 15 mots "Inconnus", introduire un nouveau mot et le marquer "Inconnu"
+     * 2. Sinon :
+     *    - 90% : Mot "Inconnu"
+     *    - 9% : Mot "Connu"
+     *    - 1% : Mot "Maîtrisé"
+     * 3. Si une catégorie est vide, cascader vers la catégorie supérieure :
+     *    Nouveau → Inconnu → Connu → Maîtrisé
      */
-    private function getRandomWordIndex(maxIndex as Number) as Number {
-        var attempts = 0;
-        var index = Math.rand() % maxIndex;
+    private function selectNextWord() as Number {
+        var unknownCount = countWordsByStatus(WordProgressStorage.STATUS_UNKNOWN);
+        var newCount = countWordsWithoutStatus();
         
-        // Essayer de trouver un index non utilisé récemment (max 10 tentatives)
-        while (attempts < 10 && usedIndices.indexOf(index) != -1) {
-            index = Math.rand() % maxIndex;
-            attempts++;
+        // Phase 1 : Introduction progressive (pool de 15 mots "Inconnus")
+        if (unknownCount < MAX_LEARNING_POOL && newCount > 0) {
+            var newWordIndex = getRandomNewWord();
+            // Marquer automatiquement comme "Inconnu" lors de la première introduction
+            VocabularyData.setWordStatus(newWordIndex, WordProgressStorage.STATUS_UNKNOWN);
+            return newWordIndex;
         }
         
-        return index;
+        // Phase 2 : Système de probabilités (90% / 9% / 1%)
+        var rand = Math.rand() % 100; // 0-99
+        var selectedIndex;
+        
+        if (rand < 90) {
+            // 90% : Mot "Inconnu"
+            selectedIndex = getRandomWordByStatus(WordProgressStorage.STATUS_UNKNOWN);
+            if (selectedIndex == -1) {
+                // Cascade : Inconnu → Nouveau → Connu → Maîtrisé
+                selectedIndex = getRandomNewWord();
+                if (selectedIndex == -1) {
+                    selectedIndex = getRandomWordByStatus(WordProgressStorage.STATUS_KNOWN);
+                    if (selectedIndex == -1) {
+                        selectedIndex = getRandomWordByStatus(WordProgressStorage.STATUS_MASTERED);
+                    }
+                }
+            }
+        } else if (rand < 99) {
+            // 9% : Mot "Connu"
+            selectedIndex = getRandomWordByStatus(WordProgressStorage.STATUS_KNOWN);
+            if (selectedIndex == -1) {
+                // Cascade : Connu → Maîtrisé → Inconnu → Nouveau
+                selectedIndex = getRandomWordByStatus(WordProgressStorage.STATUS_MASTERED);
+                if (selectedIndex == -1) {
+                    selectedIndex = getRandomWordByStatus(WordProgressStorage.STATUS_UNKNOWN);
+                    if (selectedIndex == -1) {
+                        selectedIndex = getRandomNewWord();
+                    }
+                }
+            }
+        } else {
+            // 1% : Mot "Maîtrisé"
+            selectedIndex = getRandomWordByStatus(WordProgressStorage.STATUS_MASTERED);
+            if (selectedIndex == -1) {
+                // Cascade : Maîtrisé → Connu → Inconnu → Nouveau
+                selectedIndex = getRandomWordByStatus(WordProgressStorage.STATUS_KNOWN);
+                if (selectedIndex == -1) {
+                    selectedIndex = getRandomWordByStatus(WordProgressStorage.STATUS_UNKNOWN);
+                    if (selectedIndex == -1) {
+                        selectedIndex = getRandomNewWord();
+                    }
+                }
+            }
+        }
+        
+        // Fallback de sécurité : si aucun mot trouvé, prendre un mot au hasard
+        if (selectedIndex == -1) {
+            selectedIndex = Math.rand() % VocabularyData.getVocabularySize();
+        }
+        
+        return selectedIndex;
+    }
+    
+    /**
+     * Compte les mots ayant un statut donné
+     * Utilise le cache pour performance optimale
+     */
+    private function countWordsByStatus(status as Number) as Number {
+        return VocabularyData.getIndicesByStatus(status).size();
+    }
+    
+    /**
+     * Compte les mots sans statut (nouveaux mots jamais vus)
+     * Utilise le cache pour performance optimale
+     */
+    private function countWordsWithoutStatus() as Number {
+        return VocabularyData.getIndicesWithoutStatus().size();
+    }
+    
+    /**
+     * Récupère un mot aléatoire sans statut (nouveau)
+     * Priorise les niveaux HSK : HSK 1 → HSK 2 → HSK 3
+     * Utilise les caches pour performance optimale
+     * @return Index du mot, ou -1 si aucun mot nouveau disponible
+     */
+    private function getRandomNewWord() as Number {
+        // Chercher d'abord parmi les niveaux HSK dans l'ordre (1 → 2 → 3)
+        for (var hskLevel = 1; hskLevel <= 3; hskLevel++) {
+            var hskIndices = VocabularyData.getIndicesByHskLevel(hskLevel);
+            var noStatusIndices = VocabularyData.getIndicesWithoutStatus();
+            var candidates = [] as Array<Number>;
+            
+            // Intersection : mots de ce niveau HSK ET sans statut ET non récemment utilisés
+            for (var i = 0; i < hskIndices.size(); i++) {
+                var wordIndex = hskIndices[i] as Number;
+                
+                if (noStatusIndices.indexOf(wordIndex) != -1 && !isRecentlyUsed(wordIndex)) {
+                    candidates.add(wordIndex);
+                }
+            }
+            
+            // Si des candidats trouvés pour ce niveau, en sélectionner un aléatoirement
+            if (candidates.size() > 0) {
+                return candidates[Math.rand() % candidates.size()] as Number;
+            }
+        }
+        
+        // Si aucun mot non récent trouvé, accepter un mot récemment utilisé (en respectant HSK)
+        for (var hskLevel = 1; hskLevel <= 3; hskLevel++) {
+            var hskIndices = VocabularyData.getIndicesByHskLevel(hskLevel);
+            var noStatusIndices = VocabularyData.getIndicesWithoutStatus();
+            
+            for (var i = 0; i < hskIndices.size(); i++) {
+                var wordIndex = hskIndices[i] as Number;
+                
+                if (noStatusIndices.indexOf(wordIndex) != -1) {
+                    return wordIndex;
+                }
+            }
+        }
+        
+        // Aucun nouveau mot disponible
+        return -1;
+    }
+    
+    /**
+     * Récupère un mot aléatoire ayant un statut donné
+     * Utilise les caches pour performance optimale
+     * @param status Statut recherché
+     * @return Index du mot, ou -1 si aucun mot avec ce statut disponible
+     */
+    private function getRandomWordByStatus(status as Number) as Number {
+        var statusIndices = VocabularyData.getIndicesByStatus(status);
+        var candidates = [] as Array<Number>;
+        
+        // Collecter tous les mots avec ce statut non récemment utilisés
+        for (var i = 0; i < statusIndices.size(); i++) {
+            var wordIndex = statusIndices[i] as Number;
+            
+            if (!isRecentlyUsed(wordIndex)) {
+                candidates.add(wordIndex);
+            }
+        }
+        
+        // Si aucun candidat, accepter des mots récemment utilisés
+        if (candidates.size() == 0) {
+            candidates = statusIndices;
+        }
+        
+        // Sélectionner un candidat aléatoire
+        if (candidates.size() > 0) {
+            return candidates[Math.rand() % candidates.size()] as Number;
+        }
+        
+        // Aucun mot avec ce statut
+        return -1;
+    }
+    
+    /**
+     * Vérifie si un mot a été utilisé récemment
+     */
+    private function isRecentlyUsed(index as Number) as Boolean {
+        return usedIndices.indexOf(index) != -1;
     }
     
     /**

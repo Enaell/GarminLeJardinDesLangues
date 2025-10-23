@@ -4,6 +4,8 @@ import Toybox.Lang;
  * VocabularyData
  * Module contenant le vocabulaire HSK 1 et HSK 2 (environ 300 mots)
  * Chaque entrée contient : hanzi, pinyin, traduction française, niveau HSK
+ * 
+ * Optimisation : Utilise des caches statiques pour accélérer les recherches
  */
 class VocabularyData {
     
@@ -640,6 +642,173 @@ class VocabularyData {
         ["作业", "zuòyè", "devoirs", 3],
         ["作用", "zuòyòng", "rôle", 3]
     ];
+    
+    // ========== CACHES D'OPTIMISATION ==========
+    
+    // Cache par niveau HSK (contient les indices des mots)
+    private static var hsk1Indices as Array<Number> or Null = null;
+    private static var hsk2Indices as Array<Number> or Null = null;
+    private static var hsk3Indices as Array<Number> or Null = null;
+    
+    // Cache par statut (contient les indices des mots)
+    private static var noStatusIndices as Array<Number> or Null = null;
+    private static var unknownIndices as Array<Number> or Null = null;
+    private static var knownIndices as Array<Number> or Null = null;
+    private static var masteredIndices as Array<Number> or Null = null;
+    
+    // Flag pour savoir si les caches sont initialisés
+    private static var cachesInitialized as Boolean = false;
+
+    /**
+     * Initialise tous les caches (appelé au démarrage de l'application)
+     */
+    static function initializeCaches() as Void {
+        if (cachesInitialized) {
+            return; // Déjà initialisé
+        }
+        
+        // Initialiser les caches HSK
+        hsk1Indices = [] as Array<Number>;
+        hsk2Indices = [] as Array<Number>;
+        hsk3Indices = [] as Array<Number>;
+        
+        // Parcourir une seule fois le vocabulaire pour remplir les caches HSK
+        for (var i = 0; i < vocabulary.size(); i++) {
+            var level = vocabulary[i][3] as Number;
+            
+            if (level == 1) {
+                hsk1Indices.add(i);
+            } else if (level == 2) {
+                hsk2Indices.add(i);
+            } else if (level == 3) {
+                hsk3Indices.add(i);
+            }
+        }
+        
+        // Initialiser les caches de statuts
+        refreshStatusCaches();
+        
+        cachesInitialized = true;
+    }
+    
+    /**
+     * Rafraîchit les caches de statuts (appelé au démarrage et après chaque changement)
+     */
+    static function refreshStatusCaches() as Void {
+        noStatusIndices = [] as Array<Number>;
+        unknownIndices = [] as Array<Number>;
+        knownIndices = [] as Array<Number>;
+        masteredIndices = [] as Array<Number>;
+        
+        for (var i = 0; i < vocabulary.size(); i++) {
+            if (!WordProgressStorage.hasStatus(i)) {
+                noStatusIndices.add(i);
+            } else {
+                var status = WordProgressStorage.getWordStatus(i);
+                
+                if (status == WordProgressStorage.STATUS_UNKNOWN) {
+                    unknownIndices.add(i);
+                } else if (status == WordProgressStorage.STATUS_KNOWN) {
+                    knownIndices.add(i);
+                } else if (status == WordProgressStorage.STATUS_MASTERED) {
+                    masteredIndices.add(i);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Met à jour les caches de statuts après un changement de statut
+     * @param wordIndex Index du mot modifié
+     * @param oldStatus Ancien statut (ou null si nouveau)
+     * @param newStatus Nouveau statut
+     */
+    static function updateStatusCache(wordIndex as Number, oldStatus as Number or Null, newStatus as Number) as Void {
+        if (!cachesInitialized) {
+            return; // Pas encore initialisé
+        }
+        
+        // Retirer du cache de l'ancien statut
+        if (oldStatus == null) {
+            removeFromArray(noStatusIndices, wordIndex);
+        } else if (oldStatus == WordProgressStorage.STATUS_UNKNOWN) {
+            removeFromArray(unknownIndices, wordIndex);
+        } else if (oldStatus == WordProgressStorage.STATUS_KNOWN) {
+            removeFromArray(knownIndices, wordIndex);
+        } else if (oldStatus == WordProgressStorage.STATUS_MASTERED) {
+            removeFromArray(masteredIndices, wordIndex);
+        }
+        
+        // Ajouter au cache du nouveau statut
+        if (newStatus == WordProgressStorage.STATUS_UNKNOWN) {
+            unknownIndices.add(wordIndex);
+        } else if (newStatus == WordProgressStorage.STATUS_KNOWN) {
+            knownIndices.add(wordIndex);
+        } else if (newStatus == WordProgressStorage.STATUS_MASTERED) {
+            masteredIndices.add(wordIndex);
+        }
+    }
+    
+    /**
+     * Retire un élément d'un tableau (helper)
+     */
+    private static function removeFromArray(arr as Array<Number>, value as Number) as Void {
+        var index = arr.indexOf(value);
+        if (index != -1) {
+            arr.remove(value);
+        }
+    }
+    
+    /**
+     * Retourne les indices des mots d'un niveau HSK donné
+     * @param hskLevel Niveau HSK (1, 2, ou 3)
+     * @return Array des indices
+     */
+    static function getIndicesByHskLevel(hskLevel as Number) as Array<Number> {
+        if (!cachesInitialized) {
+            initializeCaches();
+        }
+        
+        if (hskLevel == 1) {
+            return hsk1Indices as Array<Number>;
+        } else if (hskLevel == 2) {
+            return hsk2Indices as Array<Number>;
+        } else if (hskLevel == 3) {
+            return hsk3Indices as Array<Number>;
+        }
+        
+        return [] as Array<Number>;
+    }
+    
+    /**
+     * Retourne les indices des mots sans statut
+     */
+    static function getIndicesWithoutStatus() as Array<Number> {
+        if (!cachesInitialized) {
+            initializeCaches();
+        }
+        return noStatusIndices as Array<Number>;
+    }
+    
+    /**
+     * Retourne les indices des mots avec un statut donné
+     * @param status Statut recherché
+     */
+    static function getIndicesByStatus(status as Number) as Array<Number> {
+        if (!cachesInitialized) {
+            initializeCaches();
+        }
+        
+        if (status == WordProgressStorage.STATUS_UNKNOWN) {
+            return unknownIndices as Array<Number>;
+        } else if (status == WordProgressStorage.STATUS_KNOWN) {
+            return knownIndices as Array<Number>;
+        } else if (status == WordProgressStorage.STATUS_MASTERED) {
+            return masteredIndices as Array<Number>;
+        }
+        
+        return [] as Array<Number>;
+    }
 
     /**
      * Retourne le nombre total de mots dans le vocabulaire
@@ -701,7 +870,16 @@ class VocabularyData {
      * @param status Statut (WordProgressStorage.STATUS_MASTERED/KNOWN/UNKNOWN)
      */
     static function setWordStatus(index as Number, status as Number) as Void {
+        // Récupérer l'ancien statut pour mise à jour du cache
+        var oldStatus = WordProgressStorage.hasStatus(index) 
+            ? WordProgressStorage.getWordStatus(index) 
+            : null;
+        
+        // Enregistrer le nouveau statut
         WordProgressStorage.setWordStatus(index, status);
+        
+        // Mettre à jour le cache
+        updateStatusCache(index, oldStatus, status);
     }
     
     /**

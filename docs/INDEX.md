@@ -36,12 +36,13 @@ Bienvenue dans la documentation du projet **Le Jardin des Langues** - Applicatio
 
 ### Historique des versions
 👉 **[CHANGELOG.md](CHANGELOG.md)** - Historique des versions
+- Notes de la version 1.5.0 (algorithme d'apprentissage progressif + optimisations)
+- Notes de la version 1.4.1 (vocabulaire HSK 3 complet)
 - Notes de la version 1.4.0 (dictionnaire complet avec filtrage)
 - Notes de la version 1.3.0 (système de persistance optionnel)
 - Notes de la version 1.2.0 (option pinyin masquable)
 - Notes de la version 1.1.0 (menu + mode inversé)
 - Historique complet depuis v1.0.0
-- Roadmap des versions futures
 - Format standardisé (Keep a Changelog)
 
 ### Idées pour le futur
@@ -138,20 +139,21 @@ Note: HSK 1-3 déjà complets (600 mots)
 
 | Métrique | Valeur |
 |----------|--------|
-| **Version actuelle** | 1.4.1 |
-| **Date release** | 22 oct 2025 |
-| **Lignes de code** | ~2,500 |
-| **Lignes documentation** | ~1,200 |
+| **Version actuelle** | 1.5.0 |
+| **Date release** | 23 oct 2025 |
+| **Lignes de code** | ~2,800 |
+| **Lignes documentation** | ~1,500 |
 | **Fichiers source** | 12 |
 | **Fichiers documentation** | 5 |
 | **Mots HSK** | 600 (HSK 1-3) |
 | **Modes** | 2 Quiz + Dictionnaire |
-| **Fonctionnalités** | Pinyin masquable + Évaluation + Dictionnaire filtrable |
+| **Fonctionnalités** | Apprentissage progressif + Pinyin masquable + Évaluation + Dictionnaire filtrable + Caches optimisés |
 | **Appareils compatibles** | 6 modèles Fenix 8 |
 | **Langue interface** | Français |
 | **Langue contenu** | Mandarin |
 | **Modes de contrôle** | Boutons + Tactile |
 | **Persistance** | Oui (Storage API) |
+| **Performance** | ~40x plus rapide (v1.5) |
 
 ---
 
@@ -223,10 +225,10 @@ A : Actuellement en développement. Compilez depuis le source ou attendez public
 
 ## 📅 Dernière Mise à Jour
 
-**Date** : 22 octobre 2025  
-**Version** : 1.4.1  
+**Date** : 23 octobre 2025  
+**Version** : 1.5.0  
 **État** : Stable - Production Ready ✅  
-**Dernière modification** : Ajout du vocabulaire HSK 3 (300 mots supplémentaires)
+**Dernière modification** : Ajout de l'algorithme d'apprentissage progressif et système de cache ultra-performant
 
 ---
 

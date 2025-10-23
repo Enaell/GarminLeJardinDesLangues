@@ -6,6 +6,9 @@ class LanguageApp extends Application.AppBase {
 
     function initialize() {
         AppBase.initialize();
+        
+        // Initialiser les caches d'optimisation au démarrage
+        VocabularyData.initializeCaches();
     }
 
     // onStart() is called on application start up

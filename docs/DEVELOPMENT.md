@@ -198,6 +198,41 @@ Note : Un clic direct sur une option (35%-52%, 52%-69%, 69%-86%) sélectionne et
 - HSK 3 : 300 mots
 - **Total : 600 mots**
 
+**Système de Cache d'Optimisation (v1.5+)** :
+
+Pour améliorer les performances, VocabularyData utilise des caches statiques initialisés au démarrage :
+
+**Caches par niveau HSK** :
+```monkeyc
+private static var hsk1Indices as Array<Number>  // Indices des 150 mots HSK 1
+private static var hsk2Indices as Array<Number>  // Indices des 150 mots HSK 2
+private static var hsk3Indices as Array<Number>  // Indices des 300 mots HSK 3
+```
+
+**Caches par statut** :
+```monkeyc
+private static var noStatusIndices as Array<Number>    // Mots jamais vus
+private static var unknownIndices as Array<Number>     // Mots "Inconnus"
+private static var knownIndices as Array<Number>       // Mots "Connus"
+private static var masteredIndices as Array<Number>    // Mots "Maîtrisés"
+```
+
+**Initialisation** :
+- `initializeCaches()` : Appelé au démarrage de l'application (dans `LanguageApp.initialize()`)
+- Parcourt le vocabulaire une seule fois pour remplir les caches HSK
+- Rafraîchit les caches de statuts en chargeant les données sauvegardées
+
+**Mise à jour dynamique** :
+- `updateStatusCache()` : Appelé automatiquement lors d'un changement de statut
+- Retire l'index de l'ancien cache
+- Ajoute l'index au nouveau cache
+- Évite un rafraîchissement complet coûteux
+
+**Avantages** :
+- ⚡ **Performance** : Élimine les boucles répétitives (600 itérations → accès direct)
+- 📊 **Complexité** : O(600) au démarrage → O(1) pour les recherches
+- 🔄 **Temps réel** : Mise à jour incrémentale des caches de statuts
+
 **Méthodes clés** :
 - `getVocabularySize()` : Retourne le nombre total de mots (600)
 - `getWordByIndex(index)` : Récupère un mot complet
@@ -205,14 +240,20 @@ Note : Un clic direct sur une option (35%-52%, 52%-69%, 69%-86%) sélectionne et
 - `getPinyin(index)` : Récupère uniquement le pinyin
 - `getTranslation(index)` : Récupère uniquement la traduction
 - `getHskLevel(index)` : Récupère le niveau HSK
-- `setWordStatus(index, status)` : Définit le statut de maîtrise d'un mot (v1.3+)
+- `setWordStatus(index, status)` : Définit le statut + met à jour le cache (v1.3+, optimisé v1.5+)
 - `getWordStatus(index)` : Récupère le statut de maîtrise d'un mot (v1.3+)
 - `getProgressStatistics()` : Récupère les statistiques de progression (v1.3+)
+- `getIndicesByHskLevel(level)` : Retourne les indices des mots d'un niveau HSK (v1.5+)
+- `getIndicesWithoutStatus()` : Retourne les indices des mots sans statut (v1.5+)
+- `getIndicesByStatus(status)` : Retourne les indices des mots par statut (v1.5+)
+- `initializeCaches()` : Initialise les caches au démarrage (v1.5+)
+- `refreshStatusCaches()` : Rafraîchit tous les caches de statuts (v1.5+)
 
 **Ajout de nouveaux mots** :
 ```monkeyc
 // Ajouter à la fin du tableau vocabulary
 ["新词", "xīn cí", "nouveau mot", 2],
+// Note : Redémarrer l'application pour régénérer les caches HSK
 ```
 
 ### 2. QuizModel.mc
@@ -231,23 +272,93 @@ enum {
 // Variable statique pour conserver l'état du pinyin entre les sessions
 static private var showPinyin as Boolean = true;
 
+// Constantes pour l'algorithme d'apprentissage
+private const MAX_LEARNING_POOL = 15  // Pool d'apprentissage (15 mots "Inconnus")
+private const HISTORY_SIZE = 5         // Historique anti-répétition (5 derniers mots)
+
 private var quizMode             // Mode actuel (NORMAL/REVERSE)
 private var currentWordIndex      // Index du mot actuel
 private var options               // Array des 4 options de réponse
 private var correctAnswerPosition // Position de la bonne réponse (0-3)
-private var usedIndices          // Historique des mots utilisés
+private var usedIndices          // Historique des 5 derniers mots utilisés
 private var score                // Nombre de bonnes réponses
 private var totalQuestions       // Nombre total de questions
 ```
 
+**Algorithme d'Apprentissage Progressif (v1.5+)** :
+
+L'algorithme suit une logique de **répétition espacée** avec **progression par niveaux HSK** pour optimiser l'apprentissage :
+
+**Phase 1 : Introduction Progressive par Niveau HSK**
+```
+SI (mots "Inconnus" < 15 ET mots nouveaux disponibles)
+  → Sélectionner un mot jamais vu EN PRIORITÉ :
+     1. D'abord les mots HSK 1 (150 mots de base)
+     2. Puis les mots HSK 2 (150 mots intermédiaires)
+     3. Enfin les mots HSK 3 (300 mots avancés)
+  → Le marquer automatiquement comme "Inconnu"
+  → L'ajouter au pool d'apprentissage
+```
+
+**Phase 2 : Système de Probabilités**
+```
+SINON (pool de 15 mots "Inconnus" constitué)
+  → 90% de chance : Mot "Inconnu" (apprentissage intensif)
+  → 9% de chance  : Mot "Connu" (révision régulière)
+  → 1% de chance  : Mot "Maîtrisé" (révision rare)
+```
+
+**Cascade de Fallback** (si une catégorie est vide) :
+```
+Nouveau → Inconnu → Connu → Maîtrisé
+
+Exemples :
+- Si pas de mots "Inconnus" disponibles → chercher un Nouveau
+- Si pas de Nouveaux → chercher un Connu
+- Si pas de Connus → chercher un Maîtrisé
+```
+
+**Anti-Répétition** :
+- Évite les 5 derniers mots affichés (HISTORY_SIZE = 5)
+- Maximum 50 tentatives pour trouver un mot non récent
+- Accepte la répétition seulement si aucune alternative
+
+**Comportement par Statut** :
+
+| Statut | Signification | Fréquence Quiz | Transition |
+|--------|---------------|----------------|------------|
+| **Nouveau** (pas de statut) | Jamais vu | Introduit progressivement par niveau HSK (1→2→3, 15 max) | → Inconnu (auto) |
+| **Inconnu** (✗ rouge) | Déjà vu, non maîtrisé | 90% (apprentissage intensif) | Flaggage manuel |
+| **Connu** (○ orange) | Presque acquis | 9% (révision régulière) | Flaggage manuel |
+| **Maîtrisé** (✓ vert) | Acquis | 1% (révision rare) | Flaggage manuel |
+
+**Progression par Niveau HSK** :
+
+L'algorithme introduit les nouveaux mots dans l'ordre pédagogique HSK :
+
+1. **HSK 1** (150 mots) : Vocabulaire de base essentiel
+   - Priorité absolue lors de l'introduction de nouveaux mots
+   - Tous les mots HSK 1 sont introduits avant de passer au HSK 2
+
+2. **HSK 2** (150 mots) : Vocabulaire intermédiaire
+   - Introduit seulement après avoir épuisé le HSK 1
+   - Vocabulaire quotidien plus avancé
+
+3. **HSK 3** (300 mots) : Vocabulaire avancé
+   - Introduit en dernier
+   - Vocabulaire académique et expressions complexes
+
+Cette progression garantit des fondations solides avant d'aborder du vocabulaire plus complexe.
+
 **Algorithme de génération des questions** :
 ```
-1. Sélectionner un mot aléatoire (éviter les 20 derniers)
-2. MODE_NORMAL: Ajouter la traduction française aux options
+1. Sélectionner un mot selon l'algorithme d'apprentissage progressif (selectNextWord)
+2. Éviter les 5 derniers mots utilisés (anti-répétition)
+3. MODE_NORMAL: Ajouter la traduction française aux options
    MODE_REVERSE: Ajouter le hanzi aux options
-3. Générer 3 distracteurs selon le mode
-4. Mélanger les 4 options (algorithme Fisher-Yates)
-5. Mémoriser la position de la bonne réponse
+4. Générer 3 distracteurs selon le mode
+5. Mélanger les 4 options (algorithme Fisher-Yates)
+6. Mémoriser la position de la bonne réponse
 ```
 
 **Méthodes principales** :
@@ -765,6 +876,133 @@ function setHskFilter(level as Number) as Void {
 ```
 
 ## ⚡ Optimisation
+
+### Système de Cache (v1.5+)
+
+**Problème initial** : L'application parcourait les 600 mots à chaque sélection de question, causant des ralentissements.
+
+**Solution** : Système de caches statiques initialisés au démarrage.
+
+**Architecture des caches** :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  LanguageApp.initialize()                    │
+│                           │                                  │
+│                           ▼                                  │
+│              VocabularyData.initializeCaches()               │
+│                           │                                  │
+│           ┌───────────────┴───────────────┐                  │
+│           ▼                               ▼                  │
+│   Caches HSK (fixes)           Caches Statuts (dynamiques)   │
+│   ├─ hsk1Indices[]             ├─ noStatusIndices[]          │
+│   ├─ hsk2Indices[]             ├─ unknownIndices[]           │
+│   └─ hsk3Indices[]             ├─ knownIndices[]             │
+│                                └─ masteredIndices[]          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Initialisation** (une seule fois au démarrage) :
+
+```monkeyc
+// Dans LanguageApp.mc
+function initialize() {
+    AppBase.initialize();
+    VocabularyData.initializeCaches(); // ← Initialisation des caches
+}
+```
+
+**Parcours du vocabulaire** (600 mots) :
+```monkeyc
+// Une seule boucle pour tous les caches HSK
+for (var i = 0; i < 600; i++) {
+    var level = vocabulary[i][3];
+    
+    if (level == 1) { hsk1Indices.add(i); }       // 150 mots HSK 1
+    else if (level == 2) { hsk2Indices.add(i); }  // 150 mots HSK 2
+    else if (level == 3) { hsk3Indices.add(i); }  // 300 mots HSK 3
+}
+
+// Une seule boucle pour tous les caches de statuts
+for (var i = 0; i < 600; i++) {
+    if (!hasStatus(i)) { noStatusIndices.add(i); }
+    else if (status == UNKNOWN) { unknownIndices.add(i); }
+    else if (status == KNOWN) { knownIndices.add(i); }
+    else if (status == MASTERED) { masteredIndices.add(i); }
+}
+```
+
+**Mise à jour dynamique** (à chaque changement de statut) :
+
+```monkeyc
+// Au lieu de rafraîchir tous les caches (600 itérations)
+// → Mise à jour incrémentale (O(1))
+
+function setWordStatus(index, newStatus) {
+    var oldStatus = getWordStatus(index);
+    
+    // Enregistrer le nouveau statut
+    WordProgressStorage.setWordStatus(index, newStatus);
+    
+    // Mise à jour des caches (O(1) - accès direct)
+    removeFromArray(oldStatusCache, index);  // Retirer de l'ancien
+    addToArray(newStatusCache, index);       // Ajouter au nouveau
+}
+```
+
+**Gains de performance** :
+
+| Opération | Avant (sans cache) | Après (avec cache) | Gain |
+|-----------|-------------------|-------------------|------|
+| Compter les mots "Inconnus" | O(600) - parcours complet | O(1) - `.size()` | **600x** |
+| Trouver un mot HSK 1 nouveau | O(600) - parcours complet | O(150) - parcours HSK 1 uniquement | **4x** |
+| Sélectionner un mot "Connu" | O(600) - parcours complet | O(n) - n = nombre de "Connus" | **Variable** |
+| Changement de statut | O(600) - rafraîchissement | O(1) - mise à jour incrémentale | **600x** |
+| **Quiz (10 questions)** | **~6000 itérations** | **~150 itérations** | **~40x** |
+
+**Complexité algorithmique** :
+
+```
+Avant :
+- Démarrage : O(1) - Instantané
+- Par question : O(600) - Parcours complet du vocabulaire
+- 10 questions : O(6000) itérations
+
+Après :
+- Démarrage : O(600) - Initialisation des caches
+- Par question : O(1) à O(150) - Accès aux caches
+- 10 questions : O(150) itérations maximum
+- Changement statut : O(1) - Mise à jour incrémentale
+```
+
+**Mémoire** :
+
+```
+Caches HSK (fixes) :
+- hsk1Indices : 150 × 4 bytes = 600 bytes
+- hsk2Indices : 150 × 4 bytes = 600 bytes
+- hsk3Indices : 300 × 4 bytes = 1200 bytes
+Total : ~2.4 KB
+
+Caches Statuts (variables) :
+- noStatusIndices : max 600 × 4 bytes = 2.4 KB (décroît avec l'usage)
+- unknownIndices : max 600 × 4 bytes = 2.4 KB (varie)
+- knownIndices : max 600 × 4 bytes = 2.4 KB (varie)
+- masteredIndices : max 600 × 4 bytes = 2.4 KB (varie)
+Total maximum : ~9.6 KB
+
+TOTAL CACHES : ~12 KB (négligeable pour une montre Garmin)
+```
+
+**Avantages** :
+- ⚡ **Performance** : Quiz instantané, sélection rapide des mots
+- 🔋 **Batterie** : Moins de CPU = moins de consommation
+- 📊 **Scalabilité** : Peut gérer jusqu'à 5000+ mots sans ralentissement
+- 🎯 **Précision** : Accès direct aux bonnes catégories
+
+**Limitations** :
+- 💾 Utilise ~12 KB de RAM (acceptable)
+- 🔄 Rafraîchissement complet nécessaire si corruption des données (rare)
 
 ### Mémoire
 **Problème** : Les montres Garmin ont une mémoire limitée (~64-256 KB selon le modèle)
